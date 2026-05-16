@@ -826,6 +826,40 @@ function wpbn_ajax_cleanup() {
     wpbn_json( array( 'ok' => true ) );
 }
 
+// ── AJAX: test_db ─────────────────────────────────────────────────────────────
+function wpbn_ajax_test_db() {
+    $host = trim( $_POST['db_host'] ?? '' );
+    $user = trim( $_POST['db_user'] ?? '' );
+    $pass =       $_POST['db_pass'] ?? '';
+    $name = trim( $_POST['db_name'] ?? '' );
+
+    if ( ! $host || ! $user || ! $name ) {
+        wpbn_json( array( 'ok' => false, 'error' => 'Fill in host, username and database name first.' ) );
+    }
+    $conn = wpbn_db_connect( $host, $user, $pass );
+    if ( ! $conn ) {
+        wpbn_json( array( 'ok' => false, 'error' => 'Connection failed. Check your credentials.' ) );
+    }
+    $can_select = $conn->select_db( $name );
+    $ver = $conn->server_info;
+    $conn->close();
+
+    if ( $can_select ) {
+        wpbn_json( array( 'ok' => true, 'message' => 'Connected to "' . $name . '" successfully. (MySQL ' . $ver . ')' ) );
+    } else {
+        wpbn_json( array( 'ok' => true, 'warning' => 'Connected to server (MySQL ' . $ver . '), but database "' . $name . '" does not exist yet — it will be created automatically during installation.' ) );
+    }
+}
+
+// ── AJAX: view_log ─────────────────────────────────────────────────────────────
+function wpbn_ajax_view_log() {
+    if ( ! file_exists( WPBN_LOG ) ) {
+        wpbn_json( array( 'ok' => true, 'content' => '(Log file not found or empty)' ) );
+    }
+    $content = file_get_contents( WPBN_LOG );
+    wpbn_json( array( 'ok' => true, 'content' => $content ?: '(empty)' ) );
+}
+
 // ── CSRF TOKEN ────────────────────────────────────────────────────────────────
 function wpbn_csrf_token() {
     $token_file = WPBN_ROOT . '/.wpbn_csrf_token';
@@ -857,6 +891,8 @@ if ( $action === 'init_import'  ) wpbn_ajax_init_import();
 if ( $action === 'import_chunk' ) wpbn_ajax_import_chunk();
 if ( $action === 'do_replace'   ) wpbn_ajax_do_replace();
 if ( $action === 'cleanup'      ) wpbn_ajax_cleanup();
+if ( $action === 'test_db'      ) wpbn_ajax_test_db();
+if ( $action === 'view_log'     ) wpbn_ajax_view_log();
 
 // ── PAGE STATE DETECTION ──────────────────────────────────────────────────────
 header( 'X-Frame-Options: DENY' );
@@ -887,17 +923,20 @@ $zip_size_hr     = $zip_exists ? round( filesize( WPBN_ZIP_PATH ) / 1048576, 1 )
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1d2327;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px}
-.card{background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.1);padding:36px 40px;width:100%;max-width:660px;margin-top:20px}
-h1{font-size:1.4rem;color:#2271b1;margin-bottom:4px}
-.sub{color:#646970;font-size:.88rem;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.1);width:100%;max-width:660px;margin-top:20px;overflow:hidden}
+.card-header{background:linear-gradient(135deg,#1a6098 0%,#2271b1 100%);padding:22px 32px 18px}
+.card-header h1{font-size:1.3rem;color:#fff;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.card-header .sub{color:rgba(255,255,255,.78);font-size:.84rem}
+.card-body{padding:28px 32px 32px}
 .notice{padding:11px 15px;border-radius:7px;margin-bottom:14px;font-size:.87rem;line-height:1.6}
 .notice.error{background:#fce8e8;border-left:4px solid #d63638;color:#6b0000}
 .notice.success{background:#edfaef;border-left:4px solid #00a32a;color:#004708}
 .notice.warning{background:#fff8e5;border-left:4px solid #dba617;color:#5c3d02}
 .notice.info{background:#f0f6fc;border-left:4px solid #2271b1;color:#0a3d62}
-table.info{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:14px}
-table.info td{padding:6px 10px;border-bottom:1px solid #f0f0f1}
-table.info td:first-child{color:#646970;width:36%;font-weight:500}
+table.info{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:14px;border-radius:7px;overflow:hidden;border:1px solid #f0f0f1}
+table.info td{padding:7px 12px;border-bottom:1px solid #f0f0f1}
+table.info tr:last-child td{border-bottom:none}
+table.info td:first-child{color:#646970;width:36%;font-weight:500;background:#fafafa}
 label{display:block;font-size:.87rem;font-weight:600;margin-bottom:4px;margin-top:10px}
 input[type=text],input[type=password],input[type=url]{width:100%;padding:9px 12px;border:1px solid #8c8f94;border-radius:6px;font-size:.93rem}
 input:focus{outline:none;border-color:#2271b1;box-shadow:0 0 0 2px rgba(34,113,177,.15)}
@@ -908,22 +947,91 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
 .btn:disabled{background:#a7aebc;cursor:not-allowed}
 .btn.danger{background:#d63638} .btn.danger:hover{background:#b32d2e}
 .btn.success{background:#00a32a} .btn.success:hover{background:#007a1f}
+.wpbn-steps{display:flex;align-items:flex-start;margin-bottom:24px}
+.wpbn-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;min-width:0}
+.wpbn-step-num{width:30px;height:30px;border-radius:50%;background:#e2e5e9;color:#9ca3af;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .3s,color .3s}
+.wpbn-step.active .wpbn-step-num{background:#2271b1;color:#fff;box-shadow:0 0 0 3px rgba(34,113,177,.18)}
+.wpbn-step.done .wpbn-step-num{background:#00a32a;color:#fff}
+.wpbn-step-label{font-size:.71rem;color:#9ca3af;text-align:center;font-weight:500;white-space:nowrap}
+.wpbn-step.active .wpbn-step-label{color:#2271b1;font-weight:700}
+.wpbn-step.done .wpbn-step-label{color:#00a32a;font-weight:600}
+.wpbn-step-line{flex:1;height:2px;background:#e2e5e9;margin-top:14px;flex-shrink:1;transition:background .3s}
+.wpbn-step-line.done{background:#00a32a}
 #progress-wrap{display:none;margin-top:20px}
-.prog-bar-outer{background:#e2e5e9;border-radius:8px;height:22px;overflow:hidden;margin:8px 0}
-.prog-bar-inner{background:#2271b1;height:100%;border-radius:8px;transition:width .3s ease;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:700;min-width:30px}
-.prog-status{font-size:.85rem;color:#444;margin-top:6px;min-height:22px}
+.prog-phase-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.prog-phase-label{font-size:.85rem;font-weight:600;color:#2271b1}
+.prog-pct{font-size:.83rem;color:#646970;font-weight:600}
+.prog-bar-outer{background:#e2e5e9;border-radius:8px;height:20px;overflow:hidden;margin-bottom:8px}
+.prog-bar-inner{background:linear-gradient(90deg,#2271b1,#38a8d8);height:100%;border-radius:8px;transition:width .3s ease;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.73rem;font-weight:700;min-width:34px}
+.prog-status{font-size:.83rem;color:#646970;min-height:20px}
 .err-list{background:#fff8f8;border:1px solid #fcc;border-radius:6px;padding:10px;font-size:.78rem;font-family:monospace;max-height:160px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin-top:8px}
 #result-box{display:none}
 .next{background:#f8f8f8;border-radius:8px;padding:14px 18px;font-size:.86rem;line-height:2;margin:14px 0}
 #extract-wrap{margin-top:8px}
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
+.wpbn-preflight{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 14px;background:#f8f9fa;border-radius:7px;margin-bottom:18px;font-size:.79rem;border:1px solid #e5e7eb}
+.wpbn-pf-item{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.wpbn-pf-item.ok{background:#edfaef;color:#004708}
+.wpbn-pf-item.fail{background:#fce8e8;color:#6b0000;cursor:help}
+.wpbn-pf-warn{color:#5c3d02;font-weight:600;font-size:.8rem}
+.wpbn-preflight.has-error{background:#fff8e5;border-color:#dba617}
+.btn-secondary{background:#475569} .btn-secondary:hover{background:#334155}
+@media(max-width:480px){.card-body,.card-header{padding-left:18px;padding-right:18px}.row{grid-template-columns:1fr}.wpbn-step-label{font-size:.63rem}}
 </style>
 </head>
 <body>
 <div class="card">
-<h1>&#x1F504; Nota Backup Installer</h1>
-<p class="sub">Migration wizard &mdash; upload installer + ZIP to new server, then run</p>
+<div class="card-header">
+ <h1>&#x1F504; Nota Backup Installer</h1>
+ <p class="sub">Migration wizard &mdash; upload installer + ZIP to new server, then run</p>
+</div>
+<div class="card-body">
+
+<?php if ( ! $nothing_found ): ?>
+<div class="wpbn-steps" id="wpbn-steps">
+ <div class="wpbn-step <?php echo $needs_extract ? 'active' : 'done'; ?>" id="wpbn-step-1">
+  <div class="wpbn-step-num"><?php echo $needs_extract ? '1' : '&#x2713;'; ?></div>
+  <div class="wpbn-step-label">Extract</div>
+ </div>
+ <div class="wpbn-step-line <?php echo $needs_extract ? '' : 'done'; ?>" id="wpbn-stepline-1"></div>
+ <div class="wpbn-step <?php echo ( ! $needs_extract ) ? 'active' : ''; ?>" id="wpbn-step-2">
+  <div class="wpbn-step-num">2</div>
+  <div class="wpbn-step-label">Configure</div>
+ </div>
+ <div class="wpbn-step-line" id="wpbn-stepline-2"></div>
+ <div class="wpbn-step" id="wpbn-step-3">
+  <div class="wpbn-step-num">3</div>
+  <div class="wpbn-step-label">Migrate</div>
+ </div>
+ <div class="wpbn-step-line" id="wpbn-stepline-3"></div>
+ <div class="wpbn-step" id="wpbn-step-4">
+  <div class="wpbn-step-num">4</div>
+  <div class="wpbn-step-label">Done</div>
+ </div>
+</div>
+<?php endif; ?>
+
+<?php
+$pf_checks = array(
+    array( 'PHP ' . PHP_VERSION,    version_compare( PHP_VERSION, '7.4', '>=' ),  'PHP >= 7.4 required' ),
+    array( 'ZipArchive',            extension_loaded( 'zip' ),                    'Required for ZIP extraction' ),
+    array( 'mysqli',                extension_loaded( 'mysqli' ),                 'Required for database import' ),
+    array( 'OpenSSL',               extension_loaded( 'openssl' ),                'Required for encrypted backups' ),
+    array( 'Write access',          is_writable( WPBN_ROOT ),                     'Installer needs write access to this directory' ),
+);
+$pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]; } );
+?>
+<div class="wpbn-preflight<?php echo $pf_has_error ? ' has-error' : ''; ?>">
+ <?php foreach ( $pf_checks as $c ): ?>
+ <span class="wpbn-pf-item <?php echo $c[1] ? 'ok' : 'fail'; ?>"<?php echo ! $c[1] ? ' title="' . wpbn_esc( $c[2] ) . '"' : ''; ?>>
+  <?php echo $c[1] ? '&#x2713;' : '&#x2717;'; ?> <?php echo wpbn_esc( $c[0] ); ?>
+ </span>
+ <?php endforeach; ?>
+ <?php if ( $pf_has_error ): ?>
+ <span class="wpbn-pf-warn">&#x26A0; Hover over red items for details</span>
+ <?php endif; ?>
+</div>
 
 <?php if ( $nothing_found ): ?>
 <div class="notice error">
@@ -993,6 +1101,11 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
   </div>
  </div>
 
+ <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <button type="button" class="btn btn-secondary" id="test-db-btn" style="margin-top:0;padding:8px 16px;font-size:.83rem">&#x1F50C; Test Connection</button>
+  <span id="test-db-result" style="font-size:.83rem"></span>
+ </div>
+
  <?php if ( $is_encrypted ): ?>
  <hr>
  <div class="notice warning">&#x1F512; <strong>This backup is encrypted.</strong> Enter the password you used when creating this backup.</div>
@@ -1005,8 +1118,11 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
 </div>
 
 <div id="progress-wrap">
- <strong id="prog-title">&#x23F3; Importing database&hellip;</strong>
- <div class="prog-bar-outer"><div class="prog-bar-inner" id="prog-bar">0%</div></div>
+ <div class="prog-phase-row">
+  <span class="prog-phase-label" id="prog-phase-label">&#x23F3; Importing database&hellip;</span>
+  <span class="prog-pct" id="prog-pct">0%</span>
+ </div>
+ <div class="prog-bar-outer"><div class="prog-bar-inner" id="prog-bar" style="width:0%">0%</div></div>
  <div class="prog-status" id="prog-status">Starting&hellip;</div>
 </div>
 
@@ -1024,7 +1140,11 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
  <label style="font-weight:400;margin-top:10px">
   <input type="checkbox" id="del-zip-check" checked> Also delete the backup ZIP file (<?php echo wpbn_esc( WPBN_ZIP_FILE ); ?>)
  </label>
- <button class="btn danger" id="cleanup-btn">&#x1F5D1; Delete Installer Files &amp; Finish</button>
+ <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px">
+  <button class="btn danger" id="cleanup-btn" style="margin-top:0">&#x1F5D1; Delete Installer Files &amp; Finish</button>
+  <button type="button" class="btn btn-secondary" id="view-log-btn" style="margin-top:0;padding:8px 16px;font-size:.83rem">&#x1F4CB; View Log</button>
+ </div>
+ <div id="log-content" class="err-list" style="display:none;margin-top:10px"></div>
 </div>
 
 <?php endif; ?>
@@ -1084,7 +1204,31 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
     if (!bar) return;
     bar.style.width = pct + '%';
     bar.textContent = pct + '%';
+    var pctEl = document.getElementById('prog-pct');
+    if (pctEl) pctEl.textContent = pct + '%';
     document.getElementById('prog-status').textContent = status;
+  }
+
+  function setStep(n) {
+    for (var i = 1; i <= 4; i++) {
+      var el = document.getElementById('wpbn-step-' + i);
+      var line = document.getElementById('wpbn-stepline-' + i);
+      if (!el) continue;
+      el.classList.remove('active', 'done');
+      var numEl = el.querySelector('.wpbn-step-num');
+      if (i < n) {
+        el.classList.add('done');
+        if (numEl) numEl.innerHTML = '&#x2713;';
+        if (line) line.classList.add('done');
+      } else if (i === n) {
+        el.classList.add('active');
+        if (numEl) numEl.textContent = String(i);
+        if (line) line.classList.remove('done');
+      } else {
+        if (numEl) numEl.textContent = String(i);
+        if (line) line.classList.remove('done');
+      }
+    }
   }
 
   function showError(msg, highlightDb) {
@@ -1116,7 +1260,7 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
       setProgress(res.percent, '&#x23F3; Importing SQL — ' + res.query_count + ' queries, ' + res.table_count + ' tables');
       if (res.done) {
         if (!replaceNeeded) {
-          document.getElementById('prog-title').textContent = '✅ Import completed';
+          document.getElementById('prog-phase-label').textContent = '✅ Import completed';
           setProgress(100, 'Replace step skipped because URL and path are unchanged.');
           showResult(res.query_count, res.table_count, { ok: true, updated: 0, skipped: 0, url_skipped: true });
         } else {
@@ -1134,7 +1278,7 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
   function doReplace(qCount, tCount, replaceRetries) {
     replaceRetries = replaceRetries || 0;
     if (replaceRetries === 0) {
-      document.getElementById('prog-title').textContent = '⏳ Performing URL/path replacement…';
+      document.getElementById('prog-phase-label').textContent = '⏳ Performing URL/path replacement…';
       setProgress(2, 'Database import complete. Starting table-by-table replacement…');
     }
     post({ action: 'do_replace' }, function(res) {
@@ -1157,6 +1301,7 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
 
   function showResult(qCount, tCount, replaceRes) {
     document.getElementById('progress-wrap').style.display = 'none';
+    setStep(4);
     var box = document.getElementById('result-box');
     box.style.display = 'block';
     var newUrl = document.getElementById('f_new_url').value.replace(/\/$/, '');
@@ -1207,6 +1352,7 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
       }
       document.getElementById('form-wrap').style.display = 'none';
       document.getElementById('progress-wrap').style.display = 'block';
+      setStep(3);
       setProgress(0, 'Starting…');
       post({ action:'init_import', new_url:url, db_host:dbhost, db_user:dbuser, db_pass:dbpass, db_name:dbname, db_prefix:prefix, enc_password:encPass },
         function(res) {
@@ -1225,6 +1371,60 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
     });
   }
 
+  var testDbBtn = document.getElementById('test-db-btn');
+  if (testDbBtn) {
+    testDbBtn.addEventListener('click', function() {
+      var resultEl = document.getElementById('test-db-result');
+      var dbhost = document.getElementById('f_db_host').value.trim();
+      var dbuser = document.getElementById('f_db_user').value.trim();
+      var dbpass = document.getElementById('f_db_pass').value;
+      var dbname = document.getElementById('f_db_name').value.trim();
+      testDbBtn.disabled = true;
+      resultEl.textContent = 'Testing…';
+      resultEl.style.color = '#646970';
+      post({ action: 'test_db', db_host: dbhost, db_user: dbuser, db_pass: dbpass, db_name: dbname },
+        function(res) {
+          testDbBtn.disabled = false;
+          if (res.ok) {
+            resultEl.textContent = (res.warning ? '⚠ ' + res.warning : '✓ ' + res.message);
+            resultEl.style.color = res.warning ? '#dba617' : '#00a32a';
+          } else {
+            resultEl.textContent = '✗ ' + res.error;
+            resultEl.style.color = '#d63638';
+          }
+        },
+        function(err) {
+          testDbBtn.disabled = false;
+          resultEl.textContent = '✗ ' + err;
+          resultEl.style.color = '#d63638';
+        }
+      );
+    });
+  }
+
+  var viewLogBtn = document.getElementById('view-log-btn');
+  if (viewLogBtn) {
+    viewLogBtn.addEventListener('click', function() {
+      var logDiv = document.getElementById('log-content');
+      if (logDiv.style.display !== 'none') {
+        logDiv.style.display = 'none';
+        viewLogBtn.textContent = '📋 View Log';
+        return;
+      }
+      viewLogBtn.disabled = true;
+      post({ action: 'view_log' }, function(res) {
+        viewLogBtn.disabled = false;
+        logDiv.textContent = res.content || '(empty)';
+        logDiv.style.display = 'block';
+        viewLogBtn.textContent = '📋 Hide Log';
+      }, function(err) {
+        viewLogBtn.disabled = false;
+        logDiv.textContent = 'Error loading log: ' + err;
+        logDiv.style.display = 'block';
+      });
+    });
+  }
+
   var cleanupBtn = document.getElementById('cleanup-btn');
   if (cleanupBtn) {
     cleanupBtn.addEventListener('click', function() {
@@ -1240,6 +1440,7 @@ hr{border:none;border-top:1px solid #f0f0f1;margin:16px 0}
   }
 })();
 </script>
+</div>
 </div>
 </body>
 </html>
