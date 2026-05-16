@@ -1,0 +1,725 @@
+# Turkish translation for Nota Backup & Restore
+# Copyright (C) 2026 wp-nota.com
+# This file is distributed under the GPL-2.0+ license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Nota Backup & Restore 2.0.8\n"
+"Report-Msgid-Bugs-To: https://www.wp-nota.com\n"
+"POT-Creation-Date: 2026-04-30T00:00:00+00:00\n"
+"PO-Revision-Date: 2026-04-30T00:00:00+00:00\n"
+"Last-Translator: wp-nota.com <info@wp-nota.com>\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: nota-backup-restore\n"
+
+msgid "Nota Backup & Restore"
+msgstr "Nota Backup & Restore"
+
+msgid "Nota Backup"
+msgstr "Nota Backup"
+
+msgid "Full site backup plugin"
+msgstr "Tam site yedekleme eklentisi"
+
+msgid "Free"
+msgstr "Ücretsiz"
+
+msgid "Cloud storage, restore wizard, scheduled backups & more require the premium version."
+msgstr "Bulut depolama, geri yükleme sihirbazı, zamanlanmış yedekler ve daha fazlası premium sürümü gerektirir."
+
+msgid "Upgrade to Pro"
+msgstr "Pro'ya Yükselt"
+
+msgid "Get Pro"
+msgstr "Pro'ya Geç"
+
+msgid "Create New Backup"
+msgstr "Yeni Yedek Oluştur"
+
+msgid "Estimated size:"
+msgstr "Tahmini boyut:"
+
+msgid "Refresh"
+msgstr "Yenile"
+
+msgid "Cloud Storage"
+msgstr "Bulut Depolama"
+
+msgid "Upload backups to Google Drive, S3, Wasabi, Dropbox, OneDrive or FTP."
+msgstr "Yedekleri Google Drive, S3, Wasabi, Dropbox, OneDrive veya FTP'ye yükleyin."
+
+msgid "Backup Type"
+msgstr "Yedek Türü"
+
+msgid "Full"
+msgstr "Tam"
+
+msgid "Files + Database"
+msgstr "Dosyalar + Veritabanı"
+
+msgid "Database Only"
+msgstr "Yalnızca Veritabanı"
+
+msgid "SQL tables only"
+msgstr "Yalnızca SQL tabloları"
+
+msgid "Files Only"
+msgstr "Yalnızca Dosyalar"
+
+msgid "No database"
+msgstr "Veritabanı yok"
+
+msgid "Exclusion rules"
+msgstr "Dışlama kuralları"
+
+msgid "will be applied (%d path excluded)."
+msgid_plural "will be applied (%d paths excluded)."
+msgstr[0] "(%d yol dışlandı) uygulanacak."
+msgstr[1] "(%d yol dışlandı) uygulanacak."
+
+msgid "No exclusion rules defined."
+msgstr "Hiçbir dışlama kuralı tanımlanmamış."
+
+msgid "Add exclusions"
+msgstr "Dışlamalar ekle"
+
+msgid "in Settings if needed."
+msgstr "Gerekirse Ayarlar'da."
+
+msgid "Notes (optional)"
+msgstr "Notlar (isteğe bağlı)"
+
+msgid "e.g. Before plugin update"
+msgstr "örn. Eklenti güncellemesi öncesi"
+
+msgid "Start Backup"
+msgstr "Yedeklemeyi Başlat"
+
+msgid "Preparing backup…"
+msgstr "Yedek hazırlanıyor…"
+
+msgid "Backups"
+msgstr "Yedekler"
+
+msgid "Clean Temp"
+msgstr "Temp Temizle"
+
+msgid "Clean up leftover temporary files and folders"
+msgstr "Kalan geçici dosya ve klasörleri temizle"
+
+msgid "No backups yet. Create your first backup above."
+msgstr "Henüz yedek yok. Yukarıdan ilk yedeğinizi oluşturun."
+
+msgid "Filename"
+msgstr "Dosya Adı"
+
+msgid "Size"
+msgstr "Boyut"
+
+msgid "Status"
+msgstr "Durum"
+
+msgid "Created"
+msgstr "Oluşturuldu"
+
+msgid "Actions"
+msgstr "İşlemler"
+
+msgid "Complete"
+msgstr "Tamamlandı"
+
+msgid "Completed"
+msgstr "Tamamlandı"
+
+msgid "Failed"
+msgstr "Başarısız"
+
+msgid "Pending"
+msgstr "Bekliyor"
+
+msgid "Download"
+msgstr "İndir"
+
+msgid "Installer"
+msgstr "Yükleyici"
+
+msgid "Restore"
+msgstr "Geri Yükle"
+
+msgid "Restore requires the premium version"
+msgstr "Geri yükleme premium sürümünü gerektirir"
+
+msgid "Site Information"
+msgstr "Site Bilgileri"
+
+msgid "Plugin Version"
+msgstr "Eklenti Sürümü"
+
+msgid "Site URL"
+msgstr "Site URL'si"
+
+msgid "WP Version"
+msgstr "WP Sürümü"
+
+msgid "PHP Version"
+msgstr "PHP Sürümü"
+
+msgid "Backup Dir"
+msgstr "Yedek Dizini"
+
+msgid "Max Backups"
+msgstr "Maks. Yedek"
+
+msgid "ZIP Method"
+msgstr "ZIP Yöntemi"
+
+msgid "ZipArchive (PHP)"
+msgstr "ZipArchive (PHP)"
+
+msgid "ZipArchive not available"
+msgstr "ZipArchive kullanılamıyor"
+
+msgid "Exclusions"
+msgstr "Dışlamalar"
+
+msgid "%d path excluded"
+msgid_plural "%d paths excluded"
+msgstr[0] "%d yol dışlandı"
+msgstr[1] "%d yol dışlandı"
+
+msgid "add rules"
+msgstr "kural ekle"
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Auto Backup"
+msgstr "Otomatik Yedek"
+
+msgid "Disabled"
+msgstr "Devre Dışı"
+
+msgid "Settings"
+msgstr "Ayarlar"
+
+msgid "Configure backups & notifications"
+msgstr "Yedeklemeleri ve bildirimleri yapılandırın"
+
+msgid "Backup"
+msgstr "Yedekleme"
+
+msgid "Auto Backups"
+msgstr "Otomatik Yedekler"
+
+msgid "General"
+msgstr "Genel"
+
+msgid "Advanced"
+msgstr "Gelişmiş"
+
+msgid "Notifications"
+msgstr "Bildirimler"
+
+msgid "Emergency Recovery"
+msgstr "Acil Kurtarma"
+
+msgid "Google Drive"
+msgstr "Google Drive"
+
+msgid "Amazon S3"
+msgstr "Amazon S3"
+
+msgid "Wasabi"
+msgstr "Wasabi"
+
+msgid "Dropbox"
+msgstr "Dropbox"
+
+msgid "OneDrive"
+msgstr "OneDrive"
+
+msgid "FTP / SFTP"
+msgstr "FTP / SFTP"
+
+msgid "Cloud"
+msgstr "Bulut"
+
+msgid "Automatic Backups"
+msgstr "Otomatik Yedekler"
+
+msgid "Schedule daily, weekly or monthly backups that run automatically. Never forget to back up again."
+msgstr "Otomatik olarak çalışan günlük, haftalık veya aylık yedeklemeleri zamanlayın. Yedeklemeyi bir daha unutmayın."
+
+msgid "Google Drive Backup"
+msgstr "Google Drive Yedekleme"
+
+msgid "Automatically upload your backups to Google Drive after every backup. Connect multiple cloud destinations simultaneously."
+msgstr "Her yedeklemeden sonra yedeklerinizi Google Drive'a otomatik yükleyin. Birden fazla bulut hedefine aynı anda bağlanın."
+
+msgid "Amazon S3 Backup"
+msgstr "Amazon S3 Yedekleme"
+
+msgid "Automatically upload your backups to Amazon S3. Any region, custom bucket and prefix."
+msgstr "Yedeklerinizi Amazon S3'e otomatik olarak yükleyin. Herhangi bir bölge, özel kova ve ön ek."
+
+msgid "Wasabi Cloud Backup"
+msgstr "Wasabi Bulut Yedekleme"
+
+msgid "Upload backups to Wasabi S3-compatible storage. Low-cost, no egress fees."
+msgstr "Yedekleri Wasabi S3 uyumlu depolamaya yükleyin. Düşük maliyet, çıkış ücreti yok."
+
+msgid "Dropbox Backup"
+msgstr "Dropbox Yedekleme"
+
+msgid "Automatically upload your backups to Dropbox. OAuth2 authorization, folder picker."
+msgstr "Yedeklerinizi Dropbox'a otomatik olarak yükleyin. OAuth2 yetkilendirme, klasör seçici."
+
+msgid "OneDrive Backup"
+msgstr "OneDrive Yedekleme"
+
+msgid "Automatically upload your backups to Microsoft OneDrive. Personal and business accounts."
+msgstr "Yedeklerinizi Microsoft OneDrive'a otomatik olarak yükleyin. Kişisel ve kurumsal hesaplar."
+
+msgid "FTP / SFTP Backup"
+msgstr "FTP / SFTP Yedekleme"
+
+msgid "Upload your backups to any FTP or SFTP server automatically."
+msgstr "Yedeklerinizi herhangi bir FTP veya SFTP sunucusuna otomatik olarak yükleyin."
+
+msgid "General Settings"
+msgstr "Genel Ayarlar"
+
+msgid "Maximum Backups to Keep"
+msgstr "Tutulacak Maksimum Yedek Sayısı"
+
+msgid "Oldest backups are deleted automatically when this limit is exceeded."
+msgstr "Bu sınır aşıldığında en eski yedekler otomatik olarak silinir."
+
+msgid "ZIP Chunk Size (MB)"
+msgstr "ZIP Parça Boyutu (MB)"
+
+msgid "Auto-calculated: %d MB"
+msgstr "Otomatik hesaplama: %d MB"
+
+msgid "Reset to auto"
+msgstr "Otomatiğe sıfırla"
+
+msgid "↺ Recalculate"
+msgstr "↺ Yeniden Hesapla"
+
+msgid "Recalculate"
+msgstr "Yeniden Hesapla"
+
+msgid "Maximum total file size processed per ZIP request. Auto-calculated based on your server's available memory."
+msgstr "ZIP isteği başına işlenen maksimum toplam dosya boyutu. Sunucunuzun kullanılabilir belleğine göre otomatik hesaplanır."
+
+msgid "Files Per Chunk"
+msgstr "Parça Başına Dosya"
+
+msgid "Auto:"
+msgstr "Otomatik:"
+
+msgid "files"
+msgstr "dosya"
+
+msgid "Override"
+msgstr "Geçersiz Kıl"
+
+msgid "Auto-calculated from chunk size. Override only if you need a custom value."
+msgstr "Parça boyutundan otomatik hesaplanır. Yalnızca özel bir değere ihtiyaç duyarsanız geçersiz kılın."
+
+msgid "Backup Encryption"
+msgstr "Yedek Şifreleme"
+
+msgid "Enable AES-256 encryption for all backups"
+msgstr "Tüm yedekler için AES-256 şifrelemeyi etkinleştir"
+
+msgid "When enabled, <code>database.sql</code> inside each backup ZIP is encrypted. The password is stored securely using your WordPress secret keys."
+msgstr "Etkinleştirildiğinde, her yedek ZIP içindeki <code>database.sql</code> şifrelenir. Parola, WordPress gizli anahtarları kullanılarak güvenli şekilde saklanır."
+
+msgid "Encryption Password"
+msgstr "Şifreleme Parolası"
+
+msgid "(saved — enter new to change)"
+msgstr "(kayıtlı — değiştirmek için yenisini girin)"
+
+msgid "Enter a strong password"
+msgstr "Güçlü bir parola girin"
+
+msgid "If you lose this password, encrypted backups cannot be restored."
+msgstr "Bu parolayı kaybederseniz, şifreli yedekler geri yüklenemez."
+
+msgid "Email Notifications"
+msgstr "E-posta Bildirimleri"
+
+msgid "Get notified by email on backup success or failure. Includes error details for quick diagnosis."
+msgstr "Yedekleme başarısında veya başarısızlığında e-posta ile bildirim alın. Hızlı teşhis için hata ayrıntıları içerir."
+
+msgid "Excluded Folders"
+msgstr "Dışlanan Klasörler"
+
+msgid "Select folders to exclude from backups. The backup folder is already excluded automatically."
+msgstr "Yedeklerden hariç tutulacak klasörleri seçin. Yedek klasörü zaten otomatik olarak hariç tutulmuştur."
+
+msgid "Cache directories"
+msgstr "Önbellek dizinleri"
+
+msgid "General cache — W3TC, WP Super Cache, WP Rocket"
+msgstr "Genel önbellek — W3TC, WP Super Cache, WP Rocket"
+
+msgid "Uploads cache — various plugins"
+msgstr "Yüklemeler önbelleği — çeşitli eklentiler"
+
+msgid "Divi cache"
+msgstr "Divi önbelleği"
+
+msgid "Breeze cache"
+msgstr "Breeze önbelleği"
+
+msgid "WP-Optimize cache"
+msgstr "WP-Optimize önbelleği"
+
+msgid "No folders selected yet."
+msgstr "Henüz klasör seçilmedi."
+
+msgid "Loading…"
+msgstr "Yükleniyor…"
+
+msgid "Access and restore your backups even when WordPress is completely broken — directly from your browser, no admin panel needed."
+msgstr "WordPress tamamen bozulsa bile yedeklerinize erişin ve geri yükleyin — doğrudan tarayıcınızdan, admin paneline gerek kalmadan."
+
+msgid "Save Settings"
+msgstr "Ayarları Kaydet"
+
+msgid "Backup History & Statistics"
+msgstr "Yedekleme Geçmişi & İstatistikler"
+
+msgid "View backup records, charts and manage files"
+msgstr "Yedek kayıtlarını, grafikleri görüntüleyin ve dosyaları yönetin"
+
+msgid "No backups found."
+msgstr "Yedek bulunamadı."
+
+msgid "Total Records"
+msgstr "Toplam Kayıt"
+
+msgid "Successful"
+msgstr "Başarılı"
+
+msgid "Total Size"
+msgstr "Toplam Boyut"
+
+msgid "%d unregistered backup file found."
+msgid_plural "%d unregistered backup files found."
+msgstr[0] "%d kayıtsız yedek dosyası bulundu."
+msgstr[1] "%d kayıtsız yedek dosyası bulundu."
+
+msgid "ZIP file exists on server but has no database record. Use \"Register\" to add it."
+msgstr "ZIP dosyası sunucuda mevcut ancak veritabanı kaydı yok. Eklemek için \"Kayıt Et\" kullanın."
+
+msgid "Duration"
+msgstr "Süre"
+
+msgid "Backup List"
+msgstr "Yedek Listesi"
+
+msgid "Notes"
+msgstr "Notlar"
+
+msgid "Type"
+msgstr "Tür"
+
+msgid "Date"
+msgstr "Tarih"
+
+msgid "Drive Only"
+msgstr "Yalnızca Drive"
+
+msgid "Deleted"
+msgstr "Silindi"
+
+msgid "S3 only"
+msgstr "Yalnızca S3"
+
+msgid "Wasabi only"
+msgstr "Yalnızca Wasabi"
+
+msgid "Dropbox only"
+msgstr "Yalnızca Dropbox"
+
+msgid "Multi-cloud"
+msgstr "Çoklu Bulut"
+
+msgid "Unregistered"
+msgstr "Kayıtsız"
+
+msgid "Manual"
+msgstr "Manuel"
+
+msgid "Automatic"
+msgstr "Otomatik"
+
+msgid "file deleted, record kept"
+msgstr "dosya silindi, kayıt tutuluyor"
+
+msgid "Register"
+msgstr "Kayıt Et"
+
+msgid "Not local"
+msgstr "Yerel değil"
+
+msgid "Permission denied."
+msgstr "Erişim reddedildi."
+
+msgid "Security check failed."
+msgstr "Güvenlik denetimi başarısız oldu."
+
+msgid "Invalid backup ID."
+msgstr "Geçersiz yedek kimliği."
+
+msgid "Backup not found."
+msgstr "Yedek bulunamadı."
+
+msgid "Backup file not found on disk."
+msgstr "Yedek dosyası diskte bulunamadı."
+
+msgid "Installer template not found."
+msgstr "Yükleyici şablonu bulunamadı."
+
+msgid "Calculating…"
+msgstr "Hesaplanıyor…"
+
+msgid "Could not calculate"
+msgstr "Hesaplanamadı"
+
+msgid "✅ Settings saved!"
+msgstr "✅ Ayarlar kaydedildi!"
+
+msgid "Saving…"
+msgstr "Kaydediliyor…"
+
+msgid "Save failed"
+msgstr "Kayıt başarısız"
+
+msgid "⏳ Cleaning…"
+msgstr "⏳ Temizleniyor…"
+
+msgid "🧹 Clean Temp Files"
+msgstr "🧹 Geçici Dosyaları Temizle"
+
+msgid "No temp files found to clean."
+msgstr "Temizlenecek geçici dosya bulunamadı."
+
+msgid "❌ Request failed."
+msgstr "❌ İstek başarısız oldu."
+
+msgid "No backups yet."
+msgstr "Henüz yedek yok."
+
+msgid "✅ Complete"
+msgstr "✅ Tamamlandı"
+
+msgid "❌ Failed"
+msgstr "❌ Başarısız"
+
+msgid "⏳ Pending"
+msgstr "⏳ Bekliyor"
+
+msgid "Testing…"
+msgstr "Test ediliyor…"
+
+msgid "🧪 Test Connection"
+msgstr "🧪 Bağlantıyı Test Et"
+
+msgid "❌ Server error"
+msgstr "❌ Sunucu hatası"
+
+msgid "❌ Failed to load."
+msgstr "❌ Yüklenemedi."
+
+msgid "Error: "
+msgstr "Hata: "
+
+msgid "Unknown error"
+msgstr "Bilinmeyen hata"
+
+msgid "⏳ Starting…"
+msgstr "⏳ Başlıyor…"
+
+msgid "✅ Backup started."
+msgstr "✅ Yedekleme başladı."
+
+msgid "An error occurred."
+msgstr "Bir hata oluştu."
+
+msgid "▶ Run Now"
+msgstr "▶ Şimdi Çalıştır"
+
+msgid "Last backup"
+msgstr "Son yedek"
+
+msgid "Scheduled backup"
+msgstr "Zamanlanmış yedek"
+
+msgid "Next backup"
+msgstr "Sonraki yedek"
+
+msgid "+ New Backup"
+msgstr "+ Yeni Yedek"
+
+msgid "History"
+msgstr "Geçmiş"
+
+msgid "14-day free trial &nbsp;&middot;&nbsp; No credit card required &nbsp;&mdash;&nbsp; All plans include all features"
+msgstr "14 günlük ücretsiz deneme &nbsp;&middot;&nbsp; Kredi kartı gerekmez &nbsp;&mdash;&nbsp; Tüm planlar tüm özellikleri içerir"
+
+msgid "⏳ Exporting database and building file list…"
+msgstr "⏳ Veritabanı dışa aktarılıyor ve dosya listesi oluşturuluyor…"
+
+msgid "⏳ Adding files to ZIP…"
+msgstr "⏳ Dosyalar ZIP'e ekleniyor…"
+
+msgid "☁️ Uploading to cloud storage…"
+msgstr "☁️ Bulut depolamaya yükleniyor…"
+
+msgid "⏳ Connection lost — backup continues in background. You can close this page safely."
+msgstr "⏳ Bağlantı kesildi — yedekleme arka planda devam ediyor. Bu sayfayı güvenle kapatabilirsiniz."
+
+msgid "Server connection lost (init)."
+msgstr "Sunucu bağlantısı kesildi (başlangıç)."
+
+msgid "✅ Backup complete!"
+msgstr "✅ Yedekleme tamamlandı!"
+
+msgid "✅ Backup completed."
+msgstr "✅ Yedekleme tamamlandı."
+
+msgid "Are you sure you want to delete this backup? The file will be removed from the server but the record will remain in history."
+msgstr "Bu yedeği silmek istediğinizden emin misiniz? Dosya sunucudan kaldırılacak, ancak kayıt geçmişte tutulacaktır."
+
+msgid "🗑 Deleted"
+msgstr "🗑 Silindi"
+
+msgid "⏳ Uploading…"
+msgstr "⏳ Yükleniyor…"
+
+msgid "☁️ Drive only"
+msgstr "☁️ Yalnızca Drive"
+
+msgid "☁️ OneDrive only"
+msgstr "☁️ Yalnızca OneDrive"
+
+msgid "Disconnect Dropbox? You will need to re-authorize to upload backups."
+msgstr "Dropbox bağlantısını kesin? Yedek yüklemek için yeniden yetkilendirmeniz gerekecek."
+
+msgid "Disconnect OneDrive? You will need to re-authorize to upload backups."
+msgstr "OneDrive bağlantısını kesin? Yedek yüklemek için yeniden yetkilendirmeniz gerekecek."
+
+msgid "Disconnect Google Drive? You will need to re-authorize to upload backups."
+msgstr "Google Drive bağlantısını kesin? Yedek yüklemek için yeniden yetkilendirmeniz gerekecek."
+
+msgid "⚠️ Previous backup stopped unexpectedly."
+msgstr "⚠️ Önceki yedekleme beklenmedik şekilde durdu."
+
+msgid "Reason:"
+msgstr "Neden:"
+
+msgid "You can start a new backup."
+msgstr "Yeni bir yedek başlatabilirsiniz."
+
+msgid "Backup failed."
+msgstr "Yedekleme başarısız oldu."
+
+msgid "Activity Logs"
+msgstr "Aktivite Günlükleri"
+
+msgid "Per-backup log entries for debugging and audit"
+msgstr "Hata ayıklama ve denetim için yedek başına günlük kayıtları"
+
+msgid "Keep logs for last"
+msgstr "Son şu kadar yedek için günlükleri tut"
+
+msgid "backups"
+msgstr "yedek"
+
+msgid "Backup Logs"
+msgstr "Yedek Günlükleri"
+
+msgid "Backup"
+msgstr "Yedek"
+
+msgid "Log entries"
+msgstr "Günlük kayıtları"
+
+msgid "warn"
+msgstr "uyarı"
+
+msgid "err"
+msgstr "hata"
+
+msgid "No log entries yet. Run a backup to start collecting logs."
+msgstr "Henüz günlük kaydı yok. Günlük toplamaya başlamak için bir yedek alın."
+
+msgid "No log entries."
+msgstr "Günlük kaydı yok."
+
+msgid "System Logs"
+msgstr "Sistem Günlükleri"
+
+msgid "(not tied to a specific backup)"
+msgstr "(belirli bir yedekle ilişkili değil)"
+
+msgid "Level"
+msgstr "Seviye"
+
+msgid "Show logs"
+msgstr "Günlükleri göster"
+
+msgid "Hide logs"
+msgstr "Günlükleri gizle"
+
+msgid "Logs"
+msgstr "Günlükler"
+
+msgid "Saved."
+msgstr "Kaydedildi."
+
+msgid "Failed"
+msgstr "Başarısız"
+
+msgid "Complete"
+msgstr "Tamamlandı"
+
+msgid "Time"
+msgstr "Zaman"
+
+msgid "Message"
+msgstr "Mesaj"
+
+msgid "Last backup:"
+msgstr "Son yedek:"
+
+msgid "today"
+msgstr "bugün"
+
+msgid "%d day ago"
+msgstr "%d gün önce"
+
+msgid "%d days ago"
+msgstr "%d gün önce"
+
+msgid "Plugins changed"
+msgstr "Eklentiler değişti"
+
+msgid "Themes changed"
+msgstr "Temalar değişti"
+
+msgid "New uploads"
+msgstr "Yeni yüklemeler"
+
+msgid "Dismiss"
+msgstr "Kapat"

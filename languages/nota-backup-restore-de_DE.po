@@ -1,0 +1,725 @@
+# German translation for Nota Backup & Restore
+# Copyright (C) 2026 wp-nota.com
+# This file is distributed under the GPL-2.0+ license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Nota Backup & Restore 2.0.8\n"
+"Report-Msgid-Bugs-To: https://www.wp-nota.com\n"
+"POT-Creation-Date: 2026-05-02T00:00:00+00:00\n"
+"PO-Revision-Date: 2026-05-02T00:00:00+00:00\n"
+"Last-Translator: wp-nota.com <info@wp-nota.com>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: nota-backup-restore\n"
+
+msgid "Nota Backup & Restore"
+msgstr "Nota Backup & Restore"
+
+msgid "Nota Backup"
+msgstr "Nota Backup"
+
+msgid "Full site backup plugin"
+msgstr "Vollständiges Website-Backup-Plugin"
+
+msgid "Free"
+msgstr "Kostenlos"
+
+msgid "Cloud storage, restore wizard, scheduled backups & more require the premium version."
+msgstr "Cloud-Speicher, Wiederherstellungsassistent, geplante Backups und mehr erfordern die Premium-Version."
+
+msgid "Upgrade to Pro"
+msgstr "Auf Pro upgraden"
+
+msgid "Get Pro"
+msgstr "Pro erwerben"
+
+msgid "Create New Backup"
+msgstr "Neues Backup erstellen"
+
+msgid "Estimated size:"
+msgstr "Geschätzte Größe:"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+msgid "Cloud Storage"
+msgstr "Cloud-Speicher"
+
+msgid "Upload backups to Google Drive, S3, Wasabi, Dropbox, OneDrive or FTP."
+msgstr "Backups in Google Drive, S3, Wasabi, Dropbox, OneDrive oder FTP hochladen."
+
+msgid "Backup Type"
+msgstr "Backup-Typ"
+
+msgid "Full"
+msgstr "Vollständig"
+
+msgid "Files + Database"
+msgstr "Dateien + Datenbank"
+
+msgid "Database Only"
+msgstr "Nur Datenbank"
+
+msgid "SQL tables only"
+msgstr "Nur SQL-Tabellen"
+
+msgid "Files Only"
+msgstr "Nur Dateien"
+
+msgid "No database"
+msgstr "Keine Datenbank"
+
+msgid "Exclusion rules"
+msgstr "Ausschlussregeln"
+
+msgid "will be applied (%d path excluded)."
+msgid_plural "will be applied (%d paths excluded)."
+msgstr[0] "wird angewendet (%d Pfad ausgeschlossen)."
+msgstr[1] "wird angewendet (%d Pfade ausgeschlossen)."
+
+msgid "No exclusion rules defined."
+msgstr "Keine Ausschlussregeln definiert."
+
+msgid "Add exclusions"
+msgstr "Ausschlüsse hinzufügen"
+
+msgid "in Settings if needed."
+msgstr "bei Bedarf in den Einstellungen."
+
+msgid "Notes (optional)"
+msgstr "Notizen (optional)"
+
+msgid "e.g. Before plugin update"
+msgstr "z.B. Vor dem Plugin-Update"
+
+msgid "Start Backup"
+msgstr "Backup starten"
+
+msgid "Preparing backup…"
+msgstr "Backup wird vorbereitet…"
+
+msgid "Backups"
+msgstr "Backups"
+
+msgid "Clean Temp"
+msgstr "Temp bereinigen"
+
+msgid "Clean up leftover temporary files and folders"
+msgstr "Verbleibende temporäre Dateien und Ordner bereinigen"
+
+msgid "No backups yet. Create your first backup above."
+msgstr "Noch keine Backups. Erstellen Sie oben Ihr erstes Backup."
+
+msgid "Filename"
+msgstr "Dateiname"
+
+msgid "Size"
+msgstr "Größe"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Complete"
+msgstr "Abgeschlossen"
+
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+msgid "Pending"
+msgstr "Ausstehend"
+
+msgid "Download"
+msgstr "Herunterladen"
+
+msgid "Installer"
+msgstr "Installer"
+
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+msgid "Restore requires the premium version"
+msgstr "Wiederherstellung erfordert die Premium-Version"
+
+msgid "Site Information"
+msgstr "Website-Informationen"
+
+msgid "Plugin Version"
+msgstr "Plugin-Version"
+
+msgid "Site URL"
+msgstr "Website-URL"
+
+msgid "WP Version"
+msgstr "WP-Version"
+
+msgid "PHP Version"
+msgstr "PHP-Version"
+
+msgid "Backup Dir"
+msgstr "Backup-Verzeichnis"
+
+msgid "Max Backups"
+msgstr "Max. Backups"
+
+msgid "ZIP Method"
+msgstr "ZIP-Methode"
+
+msgid "ZipArchive (PHP)"
+msgstr "ZipArchive (PHP)"
+
+msgid "ZipArchive not available"
+msgstr "ZipArchive nicht verfügbar"
+
+msgid "Exclusions"
+msgstr "Ausschlüsse"
+
+msgid "%d path excluded"
+msgid_plural "%d paths excluded"
+msgstr[0] "%d Pfad ausgeschlossen"
+msgstr[1] "%d Pfade ausgeschlossen"
+
+msgid "add rules"
+msgstr "Regeln hinzufügen"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Auto Backup"
+msgstr "Automatisches Backup"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Configure backups & notifications"
+msgstr "Backups & Benachrichtigungen konfigurieren"
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Auto Backups"
+msgstr "Automatische Backups"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Advanced"
+msgstr "Erweitert"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Emergency Recovery"
+msgstr "Notfallwiederherstellung"
+
+msgid "Google Drive"
+msgstr "Google Drive"
+
+msgid "Amazon S3"
+msgstr "Amazon S3"
+
+msgid "Wasabi"
+msgstr "Wasabi"
+
+msgid "Dropbox"
+msgstr "Dropbox"
+
+msgid "OneDrive"
+msgstr "OneDrive"
+
+msgid "FTP / SFTP"
+msgstr "FTP / SFTP"
+
+msgid "Cloud"
+msgstr "Cloud"
+
+msgid "Automatic Backups"
+msgstr "Automatische Backups"
+
+msgid "Schedule daily, weekly or monthly backups that run automatically. Never forget to back up again."
+msgstr "Planen Sie tägliche, wöchentliche oder monatliche Backups, die automatisch ausgeführt werden. Vergessen Sie nie wieder ein Backup."
+
+msgid "Google Drive Backup"
+msgstr "Google Drive Backup"
+
+msgid "Automatically upload your backups to Google Drive after every backup. Connect multiple cloud destinations simultaneously."
+msgstr "Laden Sie Ihre Backups nach jedem Backup automatisch in Google Drive hoch. Verbinden Sie mehrere Cloud-Ziele gleichzeitig."
+
+msgid "Amazon S3 Backup"
+msgstr "Amazon S3 Backup"
+
+msgid "Automatically upload your backups to Amazon S3. Any region, custom bucket and prefix."
+msgstr "Laden Sie Ihre Backups automatisch in Amazon S3 hoch. Jede Region, benutzerdefinierter Bucket und Präfix."
+
+msgid "Wasabi Cloud Backup"
+msgstr "Wasabi Cloud-Backup"
+
+msgid "Upload backups to Wasabi S3-compatible storage. Low-cost, no egress fees."
+msgstr "Backups in Wasabi S3-kompatiblen Speicher hochladen. Günstig, keine Ausgangsgebühren."
+
+msgid "Dropbox Backup"
+msgstr "Dropbox Backup"
+
+msgid "Automatically upload your backups to Dropbox. OAuth2 authorization, folder picker."
+msgstr "Backups automatisch in Dropbox hochladen. OAuth2-Autorisierung, Ordnerauswahl."
+
+msgid "OneDrive Backup"
+msgstr "OneDrive Backup"
+
+msgid "Automatically upload your backups to Microsoft OneDrive. Personal and business accounts."
+msgstr "Backups automatisch in Microsoft OneDrive hochladen. Persönliche und geschäftliche Konten."
+
+msgid "FTP / SFTP Backup"
+msgstr "FTP / SFTP Backup"
+
+msgid "Upload your backups to any FTP or SFTP server automatically."
+msgstr "Backups automatisch auf jeden FTP- oder SFTP-Server hochladen."
+
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+msgid "Maximum Backups to Keep"
+msgstr "Maximale Anzahl zu behaltender Backups"
+
+msgid "Oldest backups are deleted automatically when this limit is exceeded."
+msgstr "Die ältesten Backups werden automatisch gelöscht, wenn dieses Limit überschritten wird."
+
+msgid "ZIP Chunk Size (MB)"
+msgstr "ZIP-Chunk-Größe (MB)"
+
+msgid "Auto-calculated: %d MB"
+msgstr "Automatisch berechnet: %d MB"
+
+msgid "Reset to auto"
+msgstr "Auf automatisch zurücksetzen"
+
+msgid "↺ Recalculate"
+msgstr "↺ Neu berechnen"
+
+msgid "Recalculate"
+msgstr "Neu berechnen"
+
+msgid "Maximum total file size processed per ZIP request. Auto-calculated based on your server's available memory."
+msgstr "Maximale Gesamtdateigröße pro ZIP-Anfrage. Automatisch basierend auf dem verfügbaren Serverspeicher berechnet."
+
+msgid "Files Per Chunk"
+msgstr "Dateien pro Chunk"
+
+msgid "Auto:"
+msgstr "Automatisch:"
+
+msgid "files"
+msgstr "Dateien"
+
+msgid "Override"
+msgstr "Überschreiben"
+
+msgid "Auto-calculated from chunk size. Override only if you need a custom value."
+msgstr "Automatisch aus der Chunk-Größe berechnet. Nur überschreiben, wenn ein benutzerdefinierter Wert benötigt wird."
+
+msgid "Backup Encryption"
+msgstr "Backup-Verschlüsselung"
+
+msgid "Enable AES-256 encryption for all backups"
+msgstr "AES-256-Verschlüsselung für alle Backups aktivieren"
+
+msgid "When enabled, <code>database.sql</code> inside each backup ZIP is encrypted. The password is stored securely using your WordPress secret keys."
+msgstr "Wenn aktiviert, wird <code>database.sql</code> in jedem Backup-ZIP verschlüsselt. Das Passwort wird sicher mit Ihren WordPress-Geheimschlüsseln gespeichert."
+
+msgid "Encryption Password"
+msgstr "Verschlüsselungspasswort"
+
+msgid "(saved — enter new to change)"
+msgstr "(gespeichert — neues eingeben zum Ändern)"
+
+msgid "Enter a strong password"
+msgstr "Sicheres Passwort eingeben"
+
+msgid "If you lose this password, encrypted backups cannot be restored."
+msgstr "Wenn Sie dieses Passwort verlieren, können verschlüsselte Backups nicht wiederhergestellt werden."
+
+msgid "Email Notifications"
+msgstr "E-Mail-Benachrichtigungen"
+
+msgid "Get notified by email on backup success or failure. Includes error details for quick diagnosis."
+msgstr "Bei Backup-Erfolg oder -Fehler per E-Mail benachrichtigt werden. Enthält Fehlerdetails zur schnellen Diagnose."
+
+msgid "Excluded Folders"
+msgstr "Ausgeschlossene Ordner"
+
+msgid "Select folders to exclude from backups. The backup folder is already excluded automatically."
+msgstr "Ordner auswählen, die von Backups ausgeschlossen werden. Der Backup-Ordner ist bereits automatisch ausgeschlossen."
+
+msgid "Cache directories"
+msgstr "Cache-Verzeichnisse"
+
+msgid "General cache — W3TC, WP Super Cache, WP Rocket"
+msgstr "Allgemeiner Cache — W3TC, WP Super Cache, WP Rocket"
+
+msgid "Uploads cache — various plugins"
+msgstr "Uploads-Cache — verschiedene Plugins"
+
+msgid "Divi cache"
+msgstr "Divi-Cache"
+
+msgid "Breeze cache"
+msgstr "Breeze-Cache"
+
+msgid "WP-Optimize cache"
+msgstr "WP-Optimize-Cache"
+
+msgid "No folders selected yet."
+msgstr "Noch keine Ordner ausgewählt."
+
+msgid "Loading…"
+msgstr "Wird geladen…"
+
+msgid "Access and restore your backups even when WordPress is completely broken — directly from your browser, no admin panel needed."
+msgstr "Greifen Sie auf Ihre Backups zu und stellen Sie sie wieder her, auch wenn WordPress komplett beschädigt ist — direkt aus Ihrem Browser, kein Admin-Panel erforderlich."
+
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
+
+msgid "Backup History & Statistics"
+msgstr "Backup-Verlauf & Statistiken"
+
+msgid "View backup records, charts and manage files"
+msgstr "Backup-Einträge und Diagramme anzeigen, Dateien verwalten"
+
+msgid "No backups found."
+msgstr "Keine Backups gefunden."
+
+msgid "Total Records"
+msgstr "Gesamteinträge"
+
+msgid "Successful"
+msgstr "Erfolgreich"
+
+msgid "Total Size"
+msgstr "Gesamtgröße"
+
+msgid "%d unregistered backup file found."
+msgid_plural "%d unregistered backup files found."
+msgstr[0] "%d nicht registrierte Backup-Datei gefunden."
+msgstr[1] "%d nicht registrierte Backup-Dateien gefunden."
+
+msgid "ZIP file exists on server but has no database record. Use \"Register\" to add it."
+msgstr "ZIP-Datei ist auf dem Server vorhanden, hat aber keinen Datenbankeintrag. Verwenden Sie \"Registrieren\", um sie hinzuzufügen."
+
+msgid "Duration"
+msgstr "Dauer"
+
+msgid "Backup List"
+msgstr "Backup-Liste"
+
+msgid "Notes"
+msgstr "Notizen"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Drive Only"
+msgstr "Nur Drive"
+
+msgid "Deleted"
+msgstr "Gelöscht"
+
+msgid "S3 only"
+msgstr "Nur S3"
+
+msgid "Wasabi only"
+msgstr "Nur Wasabi"
+
+msgid "Dropbox only"
+msgstr "Nur Dropbox"
+
+msgid "Multi-cloud"
+msgstr "Multi-Cloud"
+
+msgid "Unregistered"
+msgstr "Nicht registriert"
+
+msgid "Manual"
+msgstr "Manuell"
+
+msgid "Automatic"
+msgstr "Automatisch"
+
+msgid "file deleted, record kept"
+msgstr "Datei gelöscht, Eintrag behalten"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Not local"
+msgstr "Nicht lokal"
+
+msgid "Permission denied."
+msgstr "Zugriff verweigert."
+
+msgid "Security check failed."
+msgstr "Sicherheitsprüfung fehlgeschlagen."
+
+msgid "Invalid backup ID."
+msgstr "Ungültige Backup-ID."
+
+msgid "Backup not found."
+msgstr "Backup nicht gefunden."
+
+msgid "Backup file not found on disk."
+msgstr "Backup-Datei nicht auf dem Datenträger gefunden."
+
+msgid "Installer template not found."
+msgstr "Installer-Vorlage nicht gefunden."
+
+msgid "Calculating…"
+msgstr "Wird berechnet…"
+
+msgid "Could not calculate"
+msgstr "Konnte nicht berechnen"
+
+msgid "✅ Settings saved!"
+msgstr "✅ Einstellungen gespeichert!"
+
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+msgid "Save failed"
+msgstr "Speichern fehlgeschlagen"
+
+msgid "⏳ Cleaning…"
+msgstr "⏳ Wird bereinigt…"
+
+msgid "🧹 Clean Temp Files"
+msgstr "🧹 Temporäre Dateien bereinigen"
+
+msgid "No temp files found to clean."
+msgstr "Keine temporären Dateien zum Bereinigen gefunden."
+
+msgid "❌ Request failed."
+msgstr "❌ Anfrage fehlgeschlagen."
+
+msgid "No backups yet."
+msgstr "Noch keine Backups."
+
+msgid "✅ Complete"
+msgstr "✅ Abgeschlossen"
+
+msgid "❌ Failed"
+msgstr "❌ Fehlgeschlagen"
+
+msgid "⏳ Pending"
+msgstr "⏳ Ausstehend"
+
+msgid "Testing…"
+msgstr "Wird getestet…"
+
+msgid "🧪 Test Connection"
+msgstr "🧪 Verbindung testen"
+
+msgid "❌ Server error"
+msgstr "❌ Serverfehler"
+
+msgid "❌ Failed to load."
+msgstr "❌ Laden fehlgeschlagen."
+
+msgid "Error: "
+msgstr "Fehler: "
+
+msgid "Unknown error"
+msgstr "Unbekannter Fehler"
+
+msgid "⏳ Starting…"
+msgstr "⏳ Wird gestartet…"
+
+msgid "✅ Backup started."
+msgstr "✅ Backup gestartet."
+
+msgid "An error occurred."
+msgstr "Ein Fehler ist aufgetreten."
+
+msgid "▶ Run Now"
+msgstr "▶ Jetzt ausführen"
+
+msgid "Last backup"
+msgstr "Letztes Backup"
+
+msgid "Scheduled backup"
+msgstr "Geplantes Backup"
+
+msgid "Next backup"
+msgstr "Nächstes Backup"
+
+msgid "+ New Backup"
+msgstr "+ Neues Backup"
+
+msgid "History"
+msgstr "Verlauf"
+
+msgid "14-day free trial &nbsp;&middot;&nbsp; No credit card required &nbsp;&mdash;&nbsp; All plans include all features"
+msgstr "14-tägige kostenlose Testphase &nbsp;&middot;&nbsp; Keine Kreditkarte erforderlich &nbsp;&mdash;&nbsp; Alle Pläne beinhalten alle Funktionen"
+
+msgid "⏳ Exporting database and building file list…"
+msgstr "⏳ Datenbank wird exportiert und Dateiliste wird erstellt…"
+
+msgid "⏳ Adding files to ZIP…"
+msgstr "⏳ Dateien werden zum ZIP hinzugefügt…"
+
+msgid "☁️ Uploading to cloud storage…"
+msgstr "☁️ Wird in den Cloud-Speicher hochgeladen…"
+
+msgid "⏳ Connection lost — backup continues in background. You can close this page safely."
+msgstr "⏳ Verbindung unterbrochen — Backup läuft im Hintergrund weiter. Sie können diese Seite sicher schließen."
+
+msgid "Server connection lost (init)."
+msgstr "Serververbindung unterbrochen (Init)."
+
+msgid "✅ Backup complete!"
+msgstr "✅ Backup abgeschlossen!"
+
+msgid "✅ Backup completed."
+msgstr "✅ Backup abgeschlossen."
+
+msgid "Are you sure you want to delete this backup? The file will be removed from the server but the record will remain in history."
+msgstr "Sind Sie sicher, dass Sie dieses Backup löschen möchten? Die Datei wird vom Server entfernt, der Eintrag bleibt jedoch im Verlauf erhalten."
+
+msgid "🗑 Deleted"
+msgstr "🗑 Gelöscht"
+
+msgid "⏳ Uploading…"
+msgstr "⏳ Wird hochgeladen…"
+
+msgid "☁️ Drive only"
+msgstr "☁️ Nur Drive"
+
+msgid "☁️ OneDrive only"
+msgstr "☁️ Nur OneDrive"
+
+msgid "Disconnect Dropbox? You will need to re-authorize to upload backups."
+msgstr "Dropbox trennen? Sie müssen sich erneut autorisieren, um Backups hochzuladen."
+
+msgid "Disconnect OneDrive? You will need to re-authorize to upload backups."
+msgstr "OneDrive trennen? Sie müssen sich erneut autorisieren, um Backups hochzuladen."
+
+msgid "Disconnect Google Drive? You will need to re-authorize to upload backups."
+msgstr "Google Drive trennen? Sie müssen sich erneut autorisieren, um Backups hochzuladen."
+
+msgid "⚠️ Previous backup stopped unexpectedly."
+msgstr "⚠️ Vorheriges Backup wurde unerwartet gestoppt."
+
+msgid "Reason:"
+msgstr "Grund:"
+
+msgid "You can start a new backup."
+msgstr "Sie können ein neues Backup starten."
+
+msgid "Backup failed."
+msgstr "Backup fehlgeschlagen."
+
+msgid "Activity Logs"
+msgstr "Aktivitätsprotokolle"
+
+msgid "Per-backup log entries for debugging and audit"
+msgstr "Protokolleinträge pro Backup zur Fehlersuche und Prüfung"
+
+msgid "Keep logs for last"
+msgstr "Protokolle für die letzten behalten"
+
+msgid "backups"
+msgstr "Backups"
+
+msgid "Backup Logs"
+msgstr "Backup-Protokolle"
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Log entries"
+msgstr "Protokolleinträge"
+
+msgid "warn"
+msgstr "Warng."
+
+msgid "err"
+msgstr "Fehler"
+
+msgid "No log entries yet. Run a backup to start collecting logs."
+msgstr "Noch keine Protokolleinträge. Erstellen Sie ein Backup, um Protokolle zu sammeln."
+
+msgid "No log entries."
+msgstr "Keine Protokolleinträge."
+
+msgid "System Logs"
+msgstr "Systemprotokolle"
+
+msgid "(not tied to a specific backup)"
+msgstr "(nicht mit einem bestimmten Backup verknüpft)"
+
+msgid "Level"
+msgstr "Ebene"
+
+msgid "Show logs"
+msgstr "Protokolle anzeigen"
+
+msgid "Hide logs"
+msgstr "Protokolle ausblenden"
+
+msgid "Logs"
+msgstr "Protokolle"
+
+msgid "Saved."
+msgstr "Gespeichert."
+
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+msgid "Complete"
+msgstr "Abgeschlossen"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "Last backup:"
+msgstr "Letztes Backup:"
+
+msgid "today"
+msgstr "heute"
+
+msgid "%d day ago"
+msgstr "vor %d Tag"
+
+msgid "%d days ago"
+msgstr "vor %d Tagen"
+
+msgid "Plugins changed"
+msgstr "Plugins geändert"
+
+msgid "Themes changed"
+msgstr "Themes geändert"
+
+msgid "New uploads"
+msgstr "Neue Uploads"
+
+msgid "Dismiss"
+msgstr "Schließen"
