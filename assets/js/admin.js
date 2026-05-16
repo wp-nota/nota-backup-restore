@@ -544,9 +544,11 @@ jQuery(function($){
                 );
                 pollBackupStatus();
             } else if (d.finished && d.result) {
-                $progress.show();
-                $bar.css('background', '#2271b1');
-                showDoneMsg(d.result);
+                if (!$backupBtn.prop('disabled')) {
+                    $progress.show();
+                    $bar.css('background', '#2271b1');
+                    showDoneMsg(d.result);
+                }
             }
         });
     }
