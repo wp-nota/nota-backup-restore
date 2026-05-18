@@ -591,6 +591,37 @@ function wpbn_ajax_do_replace() {
     $done = ( (int) $state['replace_index'] >= $total_tables );
 
     if ( $done ) {
+        // Prefix rename: fix usermeta meta_keys and options option_names when prefix changed
+        $old_prefix = $state['old_prefix'] ?? '';
+        $new_prefix = $state['new_prefix'];
+        if ( $old_prefix !== '' && $new_prefix !== '' && $old_prefix !== $new_prefix ) {
+            $esc_old = $conn->real_escape_string( $old_prefix );
+            $esc_new = $conn->real_escape_string( $new_prefix );
+            $old_len = strlen( $old_prefix );
+            $new_len = strlen( $new_prefix );
+
+            // usermeta: old_capabilities → new_capabilities
+            $conn->query(
+                "UPDATE `{$new_prefix}usermeta`
+                 SET meta_key = CONCAT('{$esc_new}', SUBSTRING(meta_key, " . ( $old_len + 1 ) . "))
+                 WHERE LEFT(meta_key, {$old_len}) = '{$esc_old}'"
+            );
+
+            // options: delete conflicting new_X rows (hardcoded wp_ options added by WordPress/plugins)
+            $conn->query(
+                "DELETE a FROM `{$new_prefix}options` a
+                 INNER JOIN `{$new_prefix}options` b
+                 ON b.option_name = CONCAT('{$esc_old}', SUBSTRING(a.option_name, " . ( $new_len + 1 ) . "))
+                 WHERE LEFT(a.option_name, {$new_len}) = '{$esc_new}'"
+            );
+            // options: old_user_roles → new_user_roles
+            $conn->query(
+                "UPDATE `{$new_prefix}options`
+                 SET option_name = CONCAT('{$esc_new}', SUBSTRING(option_name, " . ( $old_len + 1 ) . "))
+                 WHERE LEFT(option_name, {$old_len}) = '{$esc_old}'"
+            );
+        }
+
         $cfg = WPBN_ROOT . '/wp-config.php';
         if ( file_exists( $cfg ) ) {
             $c = file_get_contents( $cfg );
@@ -1098,6 +1129,7 @@ $pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]
   <div>
    <label>Table Prefix</label>
    <input type="text" id="f_db_prefix" value="<?php echo wpbn_esc( $manifest_prefix ); ?>">
+   <div style="margin-top:4px;font-size:.82rem;color:#f0a500;">&#x26A0;&#xFE0F; Changing the table prefix may cause some plugins to lose their settings.</div>
   </div>
  </div>
 
