@@ -3,7 +3,7 @@
  * Plugin Name: Nota Backup & Restore
  * Plugin URI:  https://www.wp-nota.com
  * Description: Full site backup plugin. Backup files + database with one click. Cloud storage and restore features available in the premium version.
- * Version:     2.1.2
+ * Version:     2.1.3
  * Author:      wp-nota.com
  * Author URI:  https://wp-nota.com
  * License:     GPL-2.0+
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup operation diagnostics
 // phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- set_time_limit/ini_set required for large backup operations
 
-if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.1.2' );
+if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.1.3' );
 if ( ! defined( 'WPBN_PLUGIN_DIR' ) )  define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'WPBN_PLUGIN_URL' ) )  define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'WPBN_PLUGIN_FILE' ) ) define( 'WPBN_PLUGIN_FILE', __FILE__ );

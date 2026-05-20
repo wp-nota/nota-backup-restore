@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, zip
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,15 @@ Because no external service is used, no Terms of Use or Privacy Policy link is a
 Note: The Pro version (distributed separately, not hosted on WordPress.org) connects to third-party cloud storage services (Google Drive, Amazon S3, Wasabi, Dropbox, Microsoft OneDrive, FTP/SFTP). That code is not present in this plugin.
 
 == Changelog ==
+
+= 2.1.3 =
+* New: Settings > Exclusions — "Skip .ini files in WordPress root" option (default on); prevents php.ini / .user.ini from being included in backups and causing issues after migration
+* New: Settings > Exclusions — Staging tab added with PRO badge
+* Fix: Installer URL replace infinite loop on tables with non-UTF-8 primary keys (e.g. wp_wffilemods); cursor now base64-encoded in state
+* Fix: Installer state save failure on non-UTF-8 database content (JSON_INVALID_UTF8_SUBSTITUTE)
+* Fix: Installer MySQL error 1293 — TIMESTAMP multi-default incompatibility with MySQL 5.5 now auto-corrected
+* Fix: Installer progress bar resetting on every replace chunk
+* Fix: AJAX permission/nonce error showed generic "DB init failed." instead of actual message
 
 = 2.1.2 =
 * New: Site Changes Bar — shows what changed since the last backup (WordPress update, plugin/theme changes, new uploads) in the main backup card
