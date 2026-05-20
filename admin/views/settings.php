@@ -58,6 +58,9 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
    <a class="nav-link" data-tab="emergency" href="#tab-emergency">
     <span class="wpbn-sidebar-icon">&#x1F198;</span> <?php esc_html_e( 'Emergency Recovery', 'nota-backup-restore' ); ?><?php echo wp_kses_post( $wpbn_pro_badge ); ?>
    </a>
+   <a class="nav-link" data-tab="staging" href="#tab-staging">
+    <span class="wpbn-sidebar-icon">&#x26A1;</span> <?php esc_html_e( 'Staging', 'nota-backup-restore' ); ?><?php echo wp_kses_post( $wpbn_pro_badge ); ?>
+   </a>
 
   </div><!-- /sidebar -->
 
@@ -233,6 +236,11 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
   <div class="wpbn-tab-content" id="tab-emergency">
    <?php wpbn_render_premium_gate( __( 'Emergency Recovery', 'nota-backup-restore' ), __( 'Access and restore your backups even when WordPress is completely broken — directly from your browser, no admin panel needed.', 'nota-backup-restore' ), $wpbn_upgrade_url, 'emergency-recovery.png' ); ?>
   </div><!-- /tab-emergency -->
+
+  <!-- STAGING TAB -->
+  <div class="wpbn-tab-content" id="tab-staging">
+   <?php wpbn_render_premium_gate( __( 'Staging', 'nota-backup-restore' ), __( 'Create a full staging copy of your live site with one click. Test plugins, themes or major changes safely — then push to live when ready.', 'nota-backup-restore' ), $wpbn_upgrade_url, 'staging.png' ); ?>
+  </div><!-- /tab-staging -->
 
   <div class="mt-3 mb-4">
    <button type="button" id="wpbn-save-settings" class="btn btn-primary btn-lg"><?php esc_html_e( 'Save Settings', 'nota-backup-restore' ); ?></button>

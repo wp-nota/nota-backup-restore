@@ -55,13 +55,54 @@ function wpbn_db_connect( $host, $user, $pass ) {
 }
 
 function wpbn_state_save( $data ) {
-    file_put_contents( WPBN_STATE, json_encode( $data ) );
+    // Store $buf in a separate file to keep the JSON small.
+    // Large multi-row INSERTs can produce MB-sized $buf values; if the JSON
+    // grows too large file_put_contents silently truncates the file, which
+    // causes "State not found" on the next chunk.
+    $buf = $data['buf'] ?? '';
+    unset( $data['buf'] );
+
+    if ( $buf !== '' ) {
+        // Write buf first — if this fails, abort before touching the JSON.
+        $ok_buf = file_put_contents( WPBN_STATE . '.buf', $buf, LOCK_EX );
+        if ( $ok_buf === false ) return false;
+        $data['_buf_external'] = true;
+    } else {
+        // No buf — remove stale .buf file if present and skip the write.
+        unset( $data['_buf_external'] );
+        $buf_file = WPBN_STATE . '.buf';
+        if ( file_exists( $buf_file ) ) @unlink( $buf_file );
+    }
+
+    $json = json_encode( $data, JSON_INVALID_UTF8_SUBSTITUTE );
+    if ( $json === false ) {
+        wpbn_log( 'state_save: json_encode failed: ' . json_last_error_msg() );
+        return false;
+    }
+
+    $ok_json = file_put_contents( WPBN_STATE, $json, LOCK_EX );
+    if ( $ok_json === false ) {
+        wpbn_log( 'state_save: file write failed: ' . WPBN_STATE );
+        return false;
+    }
+    return true;
 }
 
 function wpbn_state_load() {
     if ( ! file_exists( WPBN_STATE ) ) return null;
-    $d = json_decode( file_get_contents( WPBN_STATE ), true );
-    return is_array( $d ) ? $d : null;
+    $raw = file_get_contents( WPBN_STATE );
+    if ( $raw === false || $raw === '' ) return null;
+    $d = json_decode( $raw, true );
+    if ( ! is_array( $d ) ) return null;
+
+    // Re-attach $buf from external file if present
+    if ( ! empty( $d['_buf_external'] ) ) {
+        unset( $d['_buf_external'] );
+        $buf_file = WPBN_STATE . '.buf';
+        $d['buf'] = file_exists( $buf_file ) ? (string) file_get_contents( $buf_file ) : '';
+    }
+
+    return $d;
 }
 
 // ── URL & PATH VARIATIONS ─────────────────────────────────────────────────────
@@ -210,6 +251,24 @@ function wpbn_exec_query( $conn, $query, $safe_collation, &$current_table ) {
         $qs = rtrim( $qs, " \t\n\r" ) . " DEFAULT CHARSET=utf8mb4 COLLATE={$safe_collation}";
         $ok = $conn->query( $qs );
         if ( $ok ) wpbn_log( "Collation fixed: {$current_table}" );
+    }
+
+    // MySQL 5.5 limitation: only one TIMESTAMP column may have DEFAULT/ON UPDATE CURRENT_TIMESTAMP.
+    // MySQL 5.6+ lifted this restriction. Strip ON UPDATE from all columns and keep only the
+    // first DEFAULT CURRENT_TIMESTAMP; replace the rest with DEFAULT '0000-00-00 00:00:00'.
+    if ( ! $ok && $conn->errno === 1293 ) {
+        $qt = preg_replace( '/\s+ON\s+UPDATE\s+CURRENT_TIMESTAMP/i', '', $qn );
+        $ts_count = 0;
+        $qt = preg_replace_callback(
+            '/DEFAULT\s+CURRENT_TIMESTAMP/i',
+            function( $m ) use ( &$ts_count ) {
+                $ts_count++;
+                return $ts_count === 1 ? $m[0] : "DEFAULT '0000-00-00 00:00:00'";
+            },
+            $qt
+        );
+        $ok = $conn->query( $qt );
+        if ( $ok ) wpbn_log( "TIMESTAMP multi-default fixed (1293): {$current_table}" );
     }
 
     if ( ! $ok && $conn->errno === 1071 ) {
@@ -437,7 +496,10 @@ function wpbn_ajax_import_chunk() {
     $state['query_count']   = $query_count;
     $state['table_count']   = $table_count;
     $state['errors']        = $errors;
-    wpbn_state_save( $state );
+    if ( ! wpbn_state_save( $state ) ) {
+        wpbn_log( 'State save failed at offset ' . $new_offset . ' — disk quota or write permission issue.' );
+        wpbn_json( array( 'ok' => false, 'error' => 'Could not save installer state (disk quota or write permission). Check server error log.' ) );
+    }
 
     $percent = $filesize > 0 ? min( 99, round( $new_offset / $filesize * 100 ) ) : 0;
     if ( $is_done ) $percent = 100;
@@ -485,13 +547,28 @@ function wpbn_ajax_do_replace() {
         $tables = array();
         if ( $tables_res ) while ( $r = $tables_res->fetch_row() ) $tables[] = $r[0];
 
+        // Drop import-phase fields no longer needed — keeps state JSON small.
+        // Large `errors` arrays from import can grow to hundreds of KB and
+        // cause file_put_contents to fail silently, producing "State not found".
+        unset(
+            $state['sql_file'], $state['offset'], $state['buf'],
+            $state['in_str'], $state['str_ch'], $state['escaped'], $state['in_comment_ml'],
+            $state['current_table'], $state['query_count'], $state['table_count'],
+            $state['safe_collation'], $state['errors'], $state['filesize'],
+            $state['manifest_old_url'], $state['_buf_external']
+        );
+
         $state['replace_tables']     = $tables;
         $state['replace_index']      = 0;
         $state['replace_last_pk']    = null; // cursor: last processed PK value
         $state['replace_table_info'] = null; // cached DESCRIBE result for current table
         $state['replace_updated']    = 0;
         $state['replace_errors']     = array();
-        wpbn_state_save( $state );
+        if ( ! wpbn_state_save( $state ) ) {
+            $conn->close();
+            wpbn_log( 'Replace init: state save failed.' );
+            wpbn_json( array( 'ok' => false, 'error' => 'Could not save installer state at replace init (disk quota or write permission).' ) );
+        }
     }
 
     $tables       = $state['replace_tables'];
@@ -525,8 +602,10 @@ function wpbn_ajax_do_replace() {
             $text_cols = $state['replace_table_info']['text_cols'];
         }
 
-        $last_pk   = $state['replace_last_pk'];
-        $table_done = true; // assume done unless we find a full batch
+        // Decode base64-encoded cursor (handles non-UTF-8 PK values like wp_wffilemods filenames)
+        $last_pk_enc = $state['replace_last_pk'];
+        $last_pk     = ( $last_pk_enc !== null ) ? base64_decode( $last_pk_enc ) : null;
+        $table_done  = true; // assume done unless we find a full batch
 
         if ( ! empty( $text_cols ) && $pk ) {
             $sel      = '`' . implode( '`, `', array_merge( array( $pk ), $text_cols ) ) . '`';
@@ -574,10 +653,12 @@ function wpbn_ajax_do_replace() {
             }
         }
 
-        $state['replace_last_pk'] = $last_pk;
+        // Encode cursor as base64 so non-UTF-8 bytes survive JSON serialisation intact
+        $state['replace_last_pk'] = ( $last_pk !== null ) ? base64_encode( (string) $last_pk ) : null;
         $state['replace_updated'] = (int) $state['replace_updated'] + $updated;
         if ( ! empty( $errors ) ) {
-            $state['replace_errors'] = array_merge( $state['replace_errors'], array_slice( $errors, 0, 20 ) );
+            $merged = array_merge( $state['replace_errors'], array_slice( $errors, 0, 20 ) );
+            $state['replace_errors'] = array_slice( $merged, -100 ); // keep last 100 only
         }
 
         if ( $table_done ) {
@@ -653,7 +734,11 @@ function wpbn_ajax_do_replace() {
             'percent' => 100,
         ) );
     } else {
-        wpbn_state_save( $state );
+        if ( ! wpbn_state_save( $state ) ) {
+            $conn->close();
+            wpbn_log( 'Replace: state save failed at table index ' . $state['replace_index'] );
+            wpbn_json( array( 'ok' => false, 'error' => 'Could not save installer state during replace (disk quota or write permission).' ) );
+        }
         $conn->close();
         $percent = $total_tables > 0 ? round( (int) $state['replace_index'] / $total_tables * 100 ) : 0;
         wpbn_json( array(
@@ -776,6 +861,17 @@ function wpbn_ajax_init_import() {
         }
     }
     $conn->set_charset( 'utf8mb4' );
+
+    // Drop all existing tables before import so we start clean
+    $tables_res = $conn->query( 'SHOW TABLES' );
+    if ( $tables_res ) {
+        $conn->query( 'SET FOREIGN_KEY_CHECKS = 0' );
+        while ( $row = $tables_res->fetch_row() ) {
+            $conn->query( "DROP TABLE IF EXISTS `{$row[0]}`" );
+        }
+        $conn->query( 'SET FOREIGN_KEY_CHECKS = 1' );
+        wpbn_log( 'All existing tables dropped before import.' );
+    }
 
     $safe_collation = wpbn_safe_collation( $conn );
     wpbn_log( "Import started. Collation: {$safe_collation}" );
@@ -1296,6 +1392,8 @@ $pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]
           setProgress(100, 'Replace step skipped because URL and path are unchanged.');
           showResult(res.query_count, res.table_count, { ok: true, updated: 0, skipped: 0, url_skipped: true });
         } else {
+          document.getElementById('prog-phase-label').textContent = '⏳ Performing URL/path replacement…';
+          setProgress(2, 'Database import complete. Starting table-by-table replacement…');
           doReplace(res.query_count, res.table_count);
         }
       } else {
@@ -1309,10 +1407,6 @@ $pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]
 
   function doReplace(qCount, tCount, replaceRetries) {
     replaceRetries = replaceRetries || 0;
-    if (replaceRetries === 0) {
-      document.getElementById('prog-phase-label').textContent = '⏳ Performing URL/path replacement…';
-      setProgress(2, 'Database import complete. Starting table-by-table replacement…');
-    }
     post({ action: 'do_replace' }, function(res) {
       if (!res.ok) { showError(res.error || 'Replace error'); return; }
       if (res.done) {
