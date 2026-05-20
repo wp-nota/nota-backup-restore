@@ -12,6 +12,7 @@ class WPBN_Settings {
             'max_backups'              => 5,
             'exclude_paths'            => array(),
             'excluded_cache_presets'   => array( 'cache', 'uploads/cache', 'et-cache', 'wpo-cache', 'breeze-cache' ),
+            'exclude_root_ini'         => '1',
             'chunk_size_mb'            => 5,
             'chunk_size_mb_auto'       => 0,
             'files_per_chunk_override' => 0,

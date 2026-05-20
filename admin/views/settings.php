@@ -214,6 +214,17 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
       <?php endforeach; ?>
      </div>
 
+     <div class="mb-4">
+      <p class="fw-semibold mb-2" style="font-size:.9rem;"><?php esc_html_e( 'Server config files', 'nota-backup-restore' ); ?></p>
+      <div class="form-check mb-1">
+       <input class="form-check-input" type="checkbox" name="exclude_root_ini" id="exclude_root_ini" value="1" <?php checked( ( $settings['exclude_root_ini'] ?? '1' ) === '1' ); ?>>
+       <label class="form-check-label" for="exclude_root_ini" style="font-size:.88rem;">
+        <?php esc_html_e( 'Skip .ini files in WordPress root (php.ini, .user.ini, etc.)', 'nota-backup-restore' ); ?>
+       </label>
+      </div>
+      <p class="form-text mt-1"><?php esc_html_e( 'These files contain server-specific PHP settings and can break the site after migration. Files inside wp-content/ are not affected.', 'nota-backup-restore' ); ?></p>
+     </div>
+
      <div id="wpbn-exclude-wrap">
       <!-- Selected paths -->
       <div id="wpbn-selected-paths-box" style="margin-bottom:16px;min-height:38px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">

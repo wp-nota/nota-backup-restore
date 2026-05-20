@@ -220,6 +220,8 @@ class WPBN_Ajax {
         $raw_presets   = isset( $_POST['excluded_cache_presets'] ) ? array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['excluded_cache_presets'] ) ) : array();
         $data['excluded_cache_presets'] = array_values( array_intersect( $raw_presets, $known_presets ) );
 
+        $data['exclude_root_ini'] = isset( $_POST['exclude_root_ini'] ) && $_POST['exclude_root_ini'] === '1' ? '1' : '0';
+
         // Encryption
         $data['encryption_enabled'] = isset( $_POST['encryption_enabled'] ) && $_POST['encryption_enabled'] === '1' ? '1' : '0';
         if ( isset( $_POST['encryption_password'] ) && $_POST['encryption_password'] !== '' ) {

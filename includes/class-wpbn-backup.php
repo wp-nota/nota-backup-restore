@@ -510,6 +510,9 @@ class WPBN_Backup {
         }
         $exclude_paths = array_merge( $exclude_paths, $cache_dirs );
 
+        $exclude_root_ini = WPBN_Settings::get( 'exclude_root_ini' ) === '1';
+        $root_norm        = rtrim( str_replace( '\\', '/', $base_path ), '/' );
+
         try {
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator( $base_path, RecursiveDirectoryIterator::SKIP_DOTS ),
@@ -530,6 +533,12 @@ class WPBN_Backup {
                 if ( strpos( $real_path, $excl ) === 0 ) { $skip = true; break; }
             }
             if ( $skip ) continue;
+
+            // Skip .ini files (php.ini, .user.ini, etc.) that sit directly in WordPress root
+            if ( $exclude_root_ini && strtolower( pathinfo( $real_path, PATHINFO_EXTENSION ) ) === 'ini' ) {
+                $dir_norm = rtrim( str_replace( '\\', '/', dirname( $real_path ) ), '/' );
+                if ( $dir_norm === $root_norm ) continue;
+            }
 
             $list[] = $real_path;
         }
