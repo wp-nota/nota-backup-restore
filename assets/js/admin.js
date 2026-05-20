@@ -331,6 +331,7 @@ jQuery(function($){
             encryption_password : $('#encryption_password').val(),
             exclude_paths       : $('#exclude_paths').val(),
             excluded_cache_presets : $('input[name="excluded_cache_presets[]"]:checked').map(function(){ return this.value; }).get(),
+            exclude_root_ini       : $('#exclude_root_ini').is(':checked') ? '1' : '0',
         };
 
         $.post(ajaxUrl, data, function(res){
