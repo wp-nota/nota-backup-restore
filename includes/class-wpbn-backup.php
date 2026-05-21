@@ -1,7 +1,6 @@
 <?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is always $wpdb->prefix.'wpbn_backups', never user input; caching backup records is inappropriate
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup diagnostics
-// phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- set_time_limit/ini_set required for large backup operations
 // phpcs:disable WordPress.WP.AlternativeFunctions.unlink_unlink -- wp_delete_file() used where possible; remaining unlink() calls are in error paths where WP may not be fully loaded
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -29,8 +28,8 @@ class WPBN_Backup {
      * DB dump alır, manifest/installer'ı geçici dosyaya yazar, state kaydeder.
      */
     public static function step_init( $args = array() ) {
-        @set_time_limit( 60 );
-        @ini_set( 'memory_limit', '512M' );
+        @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, extends per-request limit for large backup init
+        @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
 
         $defaults = array(
             'notes'       => '',
@@ -60,7 +59,7 @@ class WPBN_Backup {
             'db_prefix'      => $GLOBALS['wpdb']->prefix,
             'created'        => gmdate( 'Y-m-d H:i:s' ),
             'db_file'        => 'database.sql',
-            'old_paths'      => array( rtrim( ABSPATH, '/' ) ),
+            'old_paths'      => array( rtrim( ABSPATH, '/' ) ), // ABSPATH is the WordPress installation root — no WP API returns this path
             'encrypted'      => false,
         );
         if ( file_put_contents( $tmp_dir . '/wpbn-manifest.json', json_encode( $manifest, JSON_PRETTY_PRINT ) ) === false ) {
@@ -112,7 +111,7 @@ class WPBN_Backup {
             (array) WPBN_Settings::get( 'exclude_paths' ),
             array( WPBN_BACKUP_DIR )
         );
-        $file_list = self::build_file_list( ABSPATH, $exclude );
+        $file_list = self::build_file_list( ABSPATH, $exclude ); // ABSPATH is the WordPress installation root — backing up all WP files requires it
         if ( file_put_contents( $tmp_dir . '/file_list.json', json_encode( $file_list ) ) === false ) {
             return array( 'success' => false, 'error' => 'Failed to write file list. Check backup directory permissions.' );
         }
@@ -171,8 +170,8 @@ class WPBN_Backup {
      *  - Each request processes 500 files
      */
     public static function step_zip_files() {
-        @set_time_limit( 60 );
-        @ini_set( 'memory_limit', '512M' );
+        @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, extends per-request limit for ZIP chunk processing
+        @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
 
         $state = get_option( self::STATE_OPTION );
         if ( ! $state ) {
@@ -182,7 +181,7 @@ class WPBN_Backup {
         $zip_path      = $state['zip_path'];
         $file_list     = $state['file_list'];
         $offset        = (int) $state['offset'];
-        $base_path     = rtrim( ABSPATH, '/' );
+        $base_path     = rtrim( ABSPATH, '/' ); // WordPress installation root — used to build relative paths inside the ZIP
         $total         = count( $file_list );
         $str_limit     = 512 * 1024; // 512KB — below this, use addFromString
         $files_per_req = (int) ( $state['files_per_chunk'] ?? 200 );
@@ -326,7 +325,7 @@ class WPBN_Backup {
                 return array( 'success' => false, 'error' => 'ZIP close failed, file corrupt at offset ' . $offset );
             }
         }
-        @set_time_limit( 60 );
+        @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- resets limit per chunk iteration inside step_zip_files()
         gc_collect_cycles();
 
         $state['offset']         = $offset;
@@ -356,8 +355,8 @@ class WPBN_Backup {
      * DB + installer + manifest'i ZIP'e ekler, DB kaydı oluşturur, Drive'a yükler.
      */
     public static function step_finalize() {
-        @set_time_limit( 120 );
-        @ini_set( 'memory_limit', '512M' );
+        @set_time_limit( 120 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, extends limit for ZIP close + DB record creation
+        @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
 
         $state = get_option( self::STATE_OPTION );
 
@@ -501,7 +500,7 @@ class WPBN_Backup {
         $exclude_paths = array_map( function( $p ) { return rtrim( $p, '/' ); }, $exclude_paths );
 
         $enabled_presets = (array) WPBN_Settings::get( 'excluded_cache_presets' );
-        $wc = rtrim( WP_CONTENT_DIR, '/' );
+        $wc = rtrim( WP_CONTENT_DIR, '/' ); // WP_CONTENT_DIR is the wp-content folder path — used to build absolute paths for cache exclusions
         $cache_dirs = array();
         foreach ( $enabled_presets as $rel ) {
             if ( isset( self::known_cache_dirs()[ $rel ] ) ) {

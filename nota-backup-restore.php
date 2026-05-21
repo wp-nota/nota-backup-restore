@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.SchemaChange -- $table is always $wpdb->prefix.'wpbn_backups', never user input; schema migrations cannot use prepare()
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup operation diagnostics
-// phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- set_time_limit/ini_set required for large backup operations
-
 if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.1.3' );
 if ( ! defined( 'WPBN_PLUGIN_DIR' ) )  define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'WPBN_PLUGIN_URL' ) )  define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
@@ -94,7 +92,7 @@ function wpbn_run_timed_zip_loop( $max_seconds = 20 ) {
         $iteration++;
         if ( $r['next'] === 'zip_files' ) {
             gc_collect_cycles();
-            @set_time_limit( 60 );
+            @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- resets per-request limit per chunk iteration inside wpbn_run_timed_zip_loop()
         }
     } while ( $r['next'] === 'zip_files' && ( microtime( true ) - $start ) < $max_seconds );
 
@@ -103,8 +101,8 @@ function wpbn_run_timed_zip_loop( $max_seconds = 20 ) {
 
 function wpbn_cron_process_chunk() {
     ignore_user_abort( true );
-    @set_time_limit( 60 );
-    @ini_set( 'memory_limit', '512M' );
+    @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside cron callback, extends per-execution limit for ZIP chunk processing
+    @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside cron callback, raises limit only for this backup step
 
     $state = get_option( WPBN_Backup::STATE_OPTION );
     if ( ! $state ) return;

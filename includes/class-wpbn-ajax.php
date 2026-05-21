@@ -2,7 +2,6 @@
 // phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in check_permissions() via check_ajax_referer() before any $_POST access
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is always $wpdb->prefix.'wpbn_backups', never user input
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup diagnostics
-// phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- set_time_limit/ini_set required for large backup operations
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class WPBN_Ajax {
@@ -66,8 +65,8 @@ class WPBN_Ajax {
     public function run_backup_bg() {
         $this->check_permissions();
 
-        @set_time_limit( 60 );
-        @ini_set( 'memory_limit', '512M' );
+        @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, extends per-request limit for background backup launch
+        @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
 
         register_shutdown_function( function() {
             $err = error_get_last();
@@ -394,7 +393,7 @@ class WPBN_Ajax {
         $this->check_permissions();
 
         $requested = sanitize_text_field( wp_unslash( $_POST['path'] ?? '' ) );
-        $base      = rtrim( ABSPATH, '/' );
+        $base      = rtrim( ABSPATH, '/' ); // Security boundary — prevents path traversal outside the WordPress installation root
 
         if ( $requested === '' || $requested === '/' ) {
             $dir = $base;
@@ -522,7 +521,7 @@ class WPBN_Ajax {
         $start     = microtime( true );
 
         try {
-            $dir_iter = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS );
+            $dir_iter = new RecursiveDirectoryIterator( ABSPATH, RecursiveDirectoryIterator::SKIP_DOTS ); // ABSPATH is the WordPress root — scanning all WP files to estimate backup size
             $filtered = new RecursiveCallbackFilterIterator(
                 $dir_iter,
                 function ( $item ) use ( $exclude ) {
