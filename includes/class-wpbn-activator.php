@@ -67,6 +67,9 @@ class WPBN_Activator {
         ) {$charset_collate};";
         dbDelta( $sql_logs );
 
+        // Record activation time for review notice (only on first activation)
+        add_option( 'wpbn_activated_at', time() );
+
         // Default options
         $all_cache_presets = array_keys( WPBN_Backup::known_cache_dirs() );
         add_option( 'wpbn_settings', array(

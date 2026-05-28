@@ -8,6 +8,7 @@ class WPBN_Admin {
         add_action( 'admin_menu',             array( $this, 'register_menus' ) );
         add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_assets' ) );
         add_action( 'wp_dashboard_setup',     array( $this, 'register_dashboard_widget' ) );
+        add_action( 'admin_notices',          array( $this, 'render_review_notice' ) );
     }
 
     public function register_menus() {
@@ -74,10 +75,12 @@ class WPBN_Admin {
         wp_enqueue_script( 'wpbn-admin', WPBN_PLUGIN_URL . 'assets/js/admin.js',   array( 'jquery' ), WPBN_VERSION, true );
 
         wp_localize_script( 'wpbn-admin', 'wpbn', array(
-            'ajax_url'       => admin_url( 'admin-ajax.php' ),
-            'nonce'          => wp_create_nonce( 'wpbn_nonce' ),
-            'backup_dir_url' => WPBN_BACKUP_URL,
-            'upgrade_url'    => wpbn_upgrade_url(),
+            'ajax_url'          => admin_url( 'admin-ajax.php' ),
+            'nonce'             => wp_create_nonce( 'wpbn_nonce' ),
+            'backup_dir_url'    => WPBN_BACKUP_URL,
+            'upgrade_url'       => wpbn_upgrade_url(),
+            'review_url'        => 'https://wordpress.org/support/plugin/nota-backup-restore/reviews/#new-post',
+            'show_review_prompt' => get_option( 'wpbn_review_dismissed' ) ? false : true,
             'i18n'           => array(
                 'calculating'        => __( 'Calculating…', 'nota-backup-restore' ),
                 'could_not_calc'     => __( 'Could not calculate', 'nota-backup-restore' ),
@@ -140,8 +143,39 @@ class WPBN_Admin {
                 'sc_plugins'         => __( 'Plugins changed', 'nota-backup-restore' ),
                 'sc_themes'          => __( 'Themes changed', 'nota-backup-restore' ),
                 'sc_uploads'         => __( 'New uploads', 'nota-backup-restore' ),
+                'review_prompt'      => __( 'Enjoying the plugin? Leave a quick ★★★★★ review — it really helps!', 'nota-backup-restore' ),
+                'review_btn'         => __( 'Leave a Review', 'nota-backup-restore' ),
             ),
         ) );
+    }
+
+    public function render_review_notice() {
+        $screen = get_current_screen();
+        if ( ! $screen || strpos( $screen->id, 'wp-backup-nota' ) === false ) return;
+        if ( get_option( 'wpbn_review_dismissed' ) ) return;
+
+        $activated_at = (int) get_option( 'wpbn_activated_at', 0 );
+        if ( ! $activated_at || ( time() - $activated_at ) < 14 * DAY_IN_SECONDS ) return;
+
+        $remind_after = (int) get_option( 'wpbn_review_remind_after', 0 );
+        if ( $remind_after && time() < $remind_after ) return;
+
+        $review_url = 'https://wordpress.org/support/plugin/nota-backup-restore/reviews/#new-post';
+        ?>
+        <div class="notice notice-info wpbn-review-notice" style="display:flex;align-items:center;gap:12px;padding:10px 16px;">
+            <span style="font-size:1.3rem;line-height:1;">⭐</span>
+            <p style="margin:0;flex:1;">
+                <?php echo wp_kses_post( __( '<strong>Nota Backup & Restore</strong> — enjoying it? Please take a moment to leave a review on wp.org. It really helps!', 'nota-backup-restore' ) ); ?>
+            </p>
+            <a href="<?php echo esc_url( $review_url ); ?>" class="button button-primary" target="_blank" rel="noopener" data-wpbn-review="review">
+                <?php esc_html_e( '★ Leave a Review', 'nota-backup-restore' ); ?>
+            </a>
+            <button type="button" class="button" data-wpbn-review="remind">
+                <?php esc_html_e( 'Remind me later', 'nota-backup-restore' ); ?>
+            </button>
+            <button type="button" class="notice-dismiss" data-wpbn-review="dismiss" style="position:static;float:none;"></button>
+        </div>
+        <?php
     }
 
     public function render_main_page() {

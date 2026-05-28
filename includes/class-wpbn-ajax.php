@@ -24,6 +24,8 @@ class WPBN_Ajax {
         add_action( 'wp_ajax_wpbn_save_log_retention',   array( $this, 'save_log_retention' ) );
         add_action( 'wp_ajax_wpbn_remove_encryption',    array( $this, 'remove_encryption' ) );
         add_action( 'wp_ajax_wpbn_site_changes',         array( $this, 'site_changes' ) );
+        add_action( 'wp_ajax_wpbn_dismiss_review',       array( $this, 'dismiss_review' ) );
+        add_action( 'wp_ajax_wpbn_remind_review',        array( $this, 'remind_review' ) );
     }
 
     private function check_permissions() {
@@ -710,5 +712,17 @@ class WPBN_Ajax {
             'changes'    => $changes,
             'has_changes' => ! empty( $changes ),
         ) );
+    }
+
+    public function dismiss_review() {
+        $this->check_permissions();
+        update_option( 'wpbn_review_dismissed', 1 );
+        wp_send_json_success();
+    }
+
+    public function remind_review() {
+        $this->check_permissions();
+        update_option( 'wpbn_review_remind_after', time() + 7 * DAY_IN_SECONDS );
+        wp_send_json_success();
     }
 }

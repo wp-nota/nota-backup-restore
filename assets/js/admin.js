@@ -31,6 +31,35 @@ jQuery(function($){
         $backupBtn.prop('disabled', false);
         $('#wpbn-cleanup-orphans').prop('disabled', false);
         refreshBackupList();
+        maybeShowReviewPrompt();
+    }
+
+    function maybeShowReviewPrompt() {
+        if (!wpbn.show_review_prompt) return;
+        if ($('#wpbn-review-prompt').length) return;
+        var html = '<div id="wpbn-review-prompt" style="margin-top:10px;padding:10px 14px;background:#f0f6fc;border:1px solid #c3daf5;border-radius:6px;display:flex;align-items:center;gap:10px;font-size:.88rem;">'
+            + '<span>⭐</span>'
+            + '<span style="flex:1;">' + escHtml(wpbn.i18n.review_prompt) + '</span>'
+            + '<a href="' + wpbn.review_url + '" target="_blank" rel="noopener" class="button button-small" style="flex-shrink:0;" id="wpbn-review-go">' + escHtml(wpbn.i18n.review_btn) + '</a>'
+            + '<button type="button" id="wpbn-review-dismiss" style="background:none;border:none;cursor:pointer;padding:2px 6px;font-size:1rem;line-height:1;color:#646970;" title="Dismiss">&times;</button>'
+            + '</div>';
+        $progress.after(html);
+
+        $(document).on('click', '#wpbn-review-go', function() {
+            sendReviewAction('dismiss');
+        });
+        $(document).on('click', '#wpbn-review-dismiss', function() {
+            $('#wpbn-review-prompt').remove();
+            sendReviewAction('dismiss');
+        });
+    }
+
+    function sendReviewAction(action) {
+        wpbn.show_review_prompt = false;
+        var fd = new FormData();
+        fd.append('action', action === 'remind' ? 'wpbn_remind_review' : 'wpbn_dismiss_review');
+        fd.append('nonce', nonce);
+        fetch(ajaxUrl, {method:'POST', body:fd});
     }
 
     /* ── Tabs ─────────────────────────────────────────── */
@@ -717,6 +746,18 @@ jQuery(function($){
         $target.toggle(!isOpen);
         $arrow.toggleClass('dashicons-arrow-right-alt2', isOpen)
               .toggleClass('dashicons-arrow-down-alt2',  !isOpen);
+    });
+
+    // ── Review notice buttons ─────────────────────────────────────────────────
+    $(document).on('click', '.wpbn-review-notice [data-wpbn-review]', function() {
+        var action = $(this).data('wpbn-review');
+        var $notice = $(this).closest('.wpbn-review-notice');
+        $notice.fadeOut(200, function() { $notice.remove(); });
+        if (action === 'dismiss' || action === 'review') {
+            sendReviewAction('dismiss');
+        } else if (action === 'remind') {
+            sendReviewAction('remind');
+        }
     });
 
     // ── Logs page: save retention setting ────────────────────────────────────

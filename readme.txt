@@ -94,6 +94,13 @@ Because no external service is used, no Terms of Use or Privacy Policy link is a
 
 Note: The Pro version (distributed separately, not hosted on WordPress.org) connects to third-party cloud storage services (Google Drive, Amazon S3, Wasabi, Dropbox, Microsoft OneDrive, FTP/SFTP). That code is not present in this plugin.
 
+== Screenshots ==
+
+1. Main backup page — select backup type, see estimated size, and start a backup with one click.
+2. Backup history — list of all backups with status, size, creation time, and download/actions buttons.
+3. General Settings — configure chunk size, files per chunk, and AES-256 database encryption.
+4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
+
 == Changelog ==
 
 = 2.1.3 =
@@ -157,7 +164,7 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 * Security: `installer-template.php` removed from plugin; backup ZIPs no longer contain `installer.php` — the installer is now generated on demand and downloaded separately from the admin panel as a `.php` file, never written to the server filesystem
 
 = 2.0.1 =
-* Fix: Removed bundled-but-locked features to comply with WordPress.org Guideline 5 (Trialware) — selective backup types and email notifications are no longer gated in the free version
+* Fix: Removed bundled-but-locked feature stubs to comply with WordPress.org Guideline 5 (Trialware)
 * Fix: installer-template.php security hardening — removed error_reporting(E_ALL), capped max_execution_time to 3600, fixed CSRF token output escaping, sanitized HTTP_HOST
 * New: Standalone installer is now downloaded separately alongside the backup ZIP — upload both to the new server, open installer.php, and it extracts the ZIP and migrates the database automatically
 
