@@ -1,0 +1,1046 @@
+# Copyright (C) 2026 wp-nota.com
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Nota Backup & Restore 2.1.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nota-backup-restore\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-28T08:13:27+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: nota-backup-restore\n"
+
+#. Plugin Name of the plugin
+#: nota-backup-restore.php
+#: admin/class-wpbn-admin.php:16
+msgid "Nota Backup & Restore"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: nota-backup-restore.php
+msgid "https://www.wp-nota.com"
+msgstr ""
+
+#. Description of the plugin
+#: nota-backup-restore.php
+msgid "Full site backup plugin. Backup files + database with one click. Cloud storage and restore features available in the premium version."
+msgstr ""
+
+#. Author of the plugin
+#: nota-backup-restore.php
+msgid "wp-nota.com"
+msgstr ""
+
+#. Author URI of the plugin
+#: nota-backup-restore.php
+msgid "https://wp-nota.com"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:17
+msgid "Nota Backup"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:23
+#: admin/views/main.php:110
+msgid "Backups"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:24
+#: admin/class-wpbn-admin.php:116
+#: admin/class-wpbn-admin.php:255
+msgid "History"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:25
+msgid "Logs"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:26
+#: admin/views/settings.php:9
+msgid "Settings"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:85
+#: admin/views/main.php:41
+msgid "Calculating…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:86
+msgid "Could not calculate"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:87
+msgid "✅ Settings saved!"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:88
+#: admin/class-wpbn-admin.php:135
+msgid "Saving…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:89
+#: admin/views/settings.php:257
+msgid "Save Settings"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:90
+msgid "Save failed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:91
+msgid "⏳ Cleaning…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:92
+msgid "🧹 Clean Temp Files"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:93
+msgid "No temp files found to clean."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:94
+msgid "❌ Request failed."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:95
+#: admin/class-wpbn-admin.php:222
+msgid "No backups yet."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:96
+msgid "✅ Complete"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:97
+msgid "❌ Failed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:98
+msgid "⏳ Pending"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:99
+#: admin/class-wpbn-admin.php:226
+#: admin/views/history.php:156
+msgid "Completed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:100
+msgid "↺ Recalculate"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:101
+#: admin/views/settings.php:236
+msgid "Loading…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:102
+msgid "Failed to load."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:103
+msgid "Error: "
+msgstr ""
+
+#: admin/class-wpbn-admin.php:104
+#: admin/views/history.php:202
+msgid "Register"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:105
+msgid "⬇ Download"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:106
+msgid "Installer"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:107
+msgid "📦 ZIP File"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:108
+msgid "🔧 Installer PHP"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:109
+msgid "↩ Actions"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:110
+msgid "↩ Restore"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:111
+msgid "Unknown error"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:112
+#: admin/class-wpbn-admin.php:127
+#: admin/class-wpbn-admin.php:237
+#: admin/views/history.php:144
+#: admin/views/logs.php:84
+#: admin/views/main.php:126
+msgid "Status"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:113
+#: admin/class-wpbn-admin.php:126
+#: admin/class-wpbn-admin.php:241
+#: admin/views/history.php:141
+#: admin/views/main.php:125
+msgid "Size"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:114
+#: admin/class-wpbn-admin.php:246
+#: admin/views/history.php:142
+msgid "Duration"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:115
+#: admin/class-wpbn-admin.php:254
+msgid "+ New Backup"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:117
+msgid "⏳ Exporting database and building file list…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:118
+msgid "⏳ Adding files to ZIP…"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:119
+msgid "⏳ Connection lost — backup continues in background. You can close this page safely."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:120
+msgid "Server connection lost (init)."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:121
+msgid "✅ Backup complete!"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:122
+msgid "✅ Backup completed."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:123
+msgid "Are you sure you want to delete this backup? The file will be removed from the server but the record will remain in history."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:124
+msgid "🗑 Deleted"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:125
+#: admin/views/history.php:140
+#: admin/views/main.php:124
+msgid "Filename"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:128
+#: admin/views/logs.php:85
+#: admin/views/main.php:127
+msgid "Created"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:129
+#: admin/views/history.php:147
+#: admin/views/main.php:128
+#: admin/views/main.php:163
+msgid "Actions"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:130
+msgid "⚠️ Previous backup stopped unexpectedly."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:131
+msgid "Reason:"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:132
+msgid "You can start a new backup."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:133
+msgid "Backup failed."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:134
+msgid "Are you sure you want to remove encryption? The saved password will be deleted."
+msgstr ""
+
+#: admin/class-wpbn-admin.php:136
+msgid "✅ Saved"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:137
+msgid "Last backup:"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:138
+msgid "today"
+msgstr ""
+
+#. translators: %d: number of days
+#: admin/class-wpbn-admin.php:140
+#, php-format
+msgid "%d day ago"
+msgstr ""
+
+#. translators: %d: number of days
+#: admin/class-wpbn-admin.php:142
+#, php-format
+msgid "%d days ago"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:143
+msgid "Plugins changed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:144
+msgid "Themes changed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:145
+msgid "New uploads"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:146
+msgid "Enjoying the plugin? Leave a quick ★★★★★ review — it really helps!"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:147
+msgid "Leave a Review"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:168
+msgid "<strong>Nota Backup & Restore</strong> — enjoying it? Please take a moment to leave a review on wp.org. It really helps!"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:171
+msgid "★ Leave a Review"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:174
+msgid "Remind me later"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:227
+#: admin/views/history.php:98
+#: admin/views/history.php:158
+#: admin/views/logs.php:106
+#: admin/views/main.php:135
+msgid "Failed"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:228
+#: admin/views/history.php:159
+#: admin/views/main.php:136
+msgid "Pending"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:233
+msgid "Last backup"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:282
+#: admin/views/main.php:22
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: admin/class-wpbn-admin.php:284
+msgid "14-day free trial &nbsp;&middot;&nbsp; No credit card required &nbsp;&mdash;&nbsp; All plans include all features"
+msgstr ""
+
+#: admin/views/history.php:54
+msgid "Backup History & Statistics"
+msgstr ""
+
+#: admin/views/history.php:55
+msgid "View backup records, charts and manage files"
+msgstr ""
+
+#: admin/views/history.php:62
+msgid "No backups found."
+msgstr ""
+
+#: admin/views/history.php:76
+msgid "Total Records"
+msgstr ""
+
+#: admin/views/history.php:87
+msgid "Successful"
+msgstr ""
+
+#: admin/views/history.php:109
+msgid "Total Size"
+msgstr ""
+
+#. translators: %d: number of unregistered backup files
+#: admin/views/history.php:121
+#, php-format
+msgid "%d unregistered backup file found."
+msgid_plural "%d unregistered backup files found."
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/history.php:123
+msgid "ZIP file exists on server but has no database record. Use \"Register\" to add it."
+msgstr ""
+
+#: admin/views/history.php:132
+msgid "Backup List"
+msgstr ""
+
+#: admin/views/history.php:143
+#: admin/views/logs.php:83
+msgid "Type"
+msgstr ""
+
+#: admin/views/history.php:145
+msgid "Notes"
+msgstr ""
+
+#: admin/views/history.php:146
+msgid "Cloud"
+msgstr ""
+
+#: admin/views/history.php:148
+msgid "Date"
+msgstr ""
+
+#: admin/views/history.php:157
+msgid "Drive Only"
+msgstr ""
+
+#: admin/views/history.php:160
+msgid "Deleted"
+msgstr ""
+
+#: admin/views/history.php:161
+msgid "S3 only"
+msgstr ""
+
+#: admin/views/history.php:162
+msgid "Wasabi only"
+msgstr ""
+
+#: admin/views/history.php:163
+msgid "Dropbox only"
+msgstr ""
+
+#: admin/views/history.php:164
+msgid "Multi-cloud"
+msgstr ""
+
+#: admin/views/history.php:165
+msgid "Unregistered"
+msgstr ""
+
+#: admin/views/history.php:173
+msgid "Manual"
+msgstr ""
+
+#: admin/views/history.php:174
+msgid "Automatic"
+msgstr ""
+
+#: admin/views/history.php:175
+#: admin/views/main.php:64
+msgid "Full"
+msgstr ""
+
+#: admin/views/history.php:184
+msgid "file deleted, record kept"
+msgstr ""
+
+#: admin/views/history.php:209
+#: admin/views/main.php:156
+msgid "Download"
+msgstr ""
+
+#: admin/views/history.php:212
+#: admin/views/main.php:158
+msgid "ZIP File"
+msgstr ""
+
+#: admin/views/history.php:213
+#: admin/views/main.php:159
+msgid "Installer PHP"
+msgstr ""
+
+#: admin/views/logs.php:4
+#: includes/class-wpbn-ajax.php:33
+#: includes/class-wpbn-ajax.php:261
+#: includes/class-wpbn-ajax.php:300
+msgid "Permission denied."
+msgstr ""
+
+#: admin/views/logs.php:44
+msgid "Activity Logs"
+msgstr ""
+
+#: admin/views/logs.php:45
+msgid "Per-backup log entries for debugging and audit"
+msgstr ""
+
+#: admin/views/logs.php:53
+msgid "Keep logs for last"
+msgstr ""
+
+#: admin/views/logs.php:57
+msgid "backups"
+msgstr ""
+
+#: admin/views/logs.php:59
+msgid "Save"
+msgstr ""
+
+#: admin/views/logs.php:68
+msgid "No log entries yet. Run a backup to start collecting logs."
+msgstr ""
+
+#: admin/views/logs.php:76
+msgid "Backup Logs"
+msgstr ""
+
+#: admin/views/logs.php:82
+#: admin/views/settings.php:23
+msgid "Backup"
+msgstr ""
+
+#: admin/views/logs.php:86
+msgid "Log entries"
+msgstr ""
+
+#: admin/views/logs.php:108
+#: admin/views/main.php:134
+msgid "Complete"
+msgstr ""
+
+#: admin/views/logs.php:117
+msgid "warn"
+msgstr ""
+
+#: admin/views/logs.php:120
+msgid "err"
+msgstr ""
+
+#: admin/views/logs.php:128
+msgid "No log entries."
+msgstr ""
+
+#: admin/views/logs.php:156
+msgid "System Logs"
+msgstr ""
+
+#: admin/views/logs.php:157
+msgid "(not tied to a specific backup)"
+msgstr ""
+
+#: admin/views/logs.php:163
+msgid "Time"
+msgstr ""
+
+#: admin/views/logs.php:164
+msgid "Level"
+msgstr ""
+
+#: admin/views/logs.php:165
+msgid "Message"
+msgstr ""
+
+#: admin/views/main.php:12
+msgid "Full site backup plugin"
+msgstr ""
+
+#: admin/views/main.php:19
+msgid "Free"
+msgstr ""
+
+#: admin/views/main.php:20
+msgid "Cloud storage, restore wizard, scheduled backups & more require the premium version."
+msgstr ""
+
+#: admin/views/main.php:29
+msgid "Create New Backup"
+msgstr ""
+
+#: admin/views/main.php:36
+msgid "Dismiss"
+msgstr ""
+
+#: admin/views/main.php:40
+msgid "Estimated size:"
+msgstr ""
+
+#: admin/views/main.php:43
+#: admin/views/main.php:111
+msgid "Refresh"
+msgstr ""
+
+#: admin/views/main.php:52
+#: admin/views/settings.php:34
+msgid "Cloud Storage"
+msgstr ""
+
+#: admin/views/main.php:52
+msgid "Upload backups to Google Drive, S3, Wasabi, Dropbox, OneDrive or FTP."
+msgstr ""
+
+#: admin/views/main.php:54
+#: admin/views/main.php:217
+msgid "Get Pro"
+msgstr ""
+
+#: admin/views/main.php:60
+msgid "Backup Type"
+msgstr ""
+
+#: admin/views/main.php:65
+msgid "Files + Database"
+msgstr ""
+
+#: admin/views/main.php:69
+msgid "Database Only"
+msgstr ""
+
+#: admin/views/main.php:70
+msgid "SQL tables only"
+msgstr ""
+
+#: admin/views/main.php:75
+msgid "Files Only"
+msgstr ""
+
+#: admin/views/main.php:76
+msgid "No database"
+msgstr ""
+
+#: admin/views/main.php:82
+msgid "Exclusion rules"
+msgstr ""
+
+#. translators: %d: number of excluded paths
+#: admin/views/main.php:84
+#, php-format
+msgid "will be applied (%d path excluded)."
+msgid_plural "will be applied (%d paths excluded)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/main.php:86
+msgid "No exclusion rules defined."
+msgstr ""
+
+#: admin/views/main.php:86
+msgid "Add exclusions"
+msgstr ""
+
+#: admin/views/main.php:86
+msgid "in Settings if needed."
+msgstr ""
+
+#: admin/views/main.php:92
+msgid "Notes (optional)"
+msgstr ""
+
+#: admin/views/main.php:93
+msgid "e.g. Before plugin update"
+msgstr ""
+
+#: admin/views/main.php:97
+msgid "Start Backup"
+msgstr ""
+
+#: admin/views/main.php:102
+msgid "Preparing backup…"
+msgstr ""
+
+#: admin/views/main.php:112
+msgid "Clean up leftover temporary files and folders"
+msgstr ""
+
+#: admin/views/main.php:112
+msgid "Clean Temp"
+msgstr ""
+
+#: admin/views/main.php:118
+msgid "No backups yet. Create your first backup above."
+msgstr ""
+
+#: admin/views/main.php:165
+msgid "Restore requires the premium version"
+msgstr ""
+
+#: admin/views/main.php:165
+msgid "Restore"
+msgstr ""
+
+#: admin/views/main.php:188
+msgid "Site Information"
+msgstr ""
+
+#: admin/views/main.php:192
+msgid "Plugin Version"
+msgstr ""
+
+#: admin/views/main.php:193
+msgid "Site URL"
+msgstr ""
+
+#: admin/views/main.php:194
+msgid "WP Version"
+msgstr ""
+
+#: admin/views/main.php:195
+msgid "PHP Version"
+msgstr ""
+
+#: admin/views/main.php:196
+msgid "Backup Dir"
+msgstr ""
+
+#: admin/views/main.php:197
+msgid "Max Backups"
+msgstr ""
+
+#: admin/views/main.php:198
+msgid "ZIP Method"
+msgstr ""
+
+#: admin/views/main.php:200
+msgid "ZipArchive (PHP)"
+msgstr ""
+
+#: admin/views/main.php:201
+msgid "ZipArchive not available"
+msgstr ""
+
+#: admin/views/main.php:203
+#: admin/views/settings.php:31
+msgid "Exclusions"
+msgstr ""
+
+#. translators: %d: number of excluded paths
+#: admin/views/main.php:207
+#, php-format
+msgid "%d path excluded"
+msgid_plural "%d paths excluded"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/main.php:215
+msgid "None"
+msgstr ""
+
+#: admin/views/main.php:215
+msgid "add rules"
+msgstr ""
+
+#: admin/views/main.php:217
+msgid "Auto Backup"
+msgstr ""
+
+#: admin/views/main.php:217
+msgid "Disabled"
+msgstr ""
+
+#: admin/views/settings.php:10
+msgid "Configure backups & notifications"
+msgstr ""
+
+#: admin/views/settings.php:25
+msgid "Auto Backups"
+msgstr ""
+
+#: admin/views/settings.php:28
+msgid "General"
+msgstr ""
+
+#: admin/views/settings.php:36
+msgid "Google Drive"
+msgstr ""
+
+#: admin/views/settings.php:39
+msgid "Amazon S3"
+msgstr ""
+
+#: admin/views/settings.php:42
+msgid "Wasabi"
+msgstr ""
+
+#: admin/views/settings.php:45
+msgid "Dropbox"
+msgstr ""
+
+#: admin/views/settings.php:48
+msgid "OneDrive"
+msgstr ""
+
+#: admin/views/settings.php:51
+msgid "FTP / SFTP"
+msgstr ""
+
+#: admin/views/settings.php:54
+msgid "Advanced"
+msgstr ""
+
+#: admin/views/settings.php:56
+msgid "Notifications"
+msgstr ""
+
+#: admin/views/settings.php:59
+#: admin/views/settings.php:248
+msgid "Emergency Recovery"
+msgstr ""
+
+#: admin/views/settings.php:62
+#: admin/views/settings.php:253
+msgid "Staging"
+msgstr ""
+
+#: admin/views/settings.php:74
+msgid "Automatic Backups"
+msgstr ""
+
+#: admin/views/settings.php:74
+msgid "Schedule daily, weekly or monthly backups that run automatically. Never forget to back up again."
+msgstr ""
+
+#: admin/views/settings.php:79
+msgid "Google Drive Backup"
+msgstr ""
+
+#: admin/views/settings.php:79
+msgid "Automatically upload your backups to Google Drive after every backup. Connect multiple cloud destinations simultaneously."
+msgstr ""
+
+#: admin/views/settings.php:84
+msgid "Amazon S3 Backup"
+msgstr ""
+
+#: admin/views/settings.php:84
+msgid "Automatically upload your backups to Amazon S3. Any region, custom bucket and prefix."
+msgstr ""
+
+#: admin/views/settings.php:89
+msgid "Wasabi Cloud Backup"
+msgstr ""
+
+#: admin/views/settings.php:89
+msgid "Upload backups to Wasabi S3-compatible storage. Low-cost, no egress fees."
+msgstr ""
+
+#: admin/views/settings.php:94
+msgid "Dropbox Backup"
+msgstr ""
+
+#: admin/views/settings.php:94
+msgid "Automatically upload your backups to Dropbox. OAuth2 authorization, folder picker."
+msgstr ""
+
+#: admin/views/settings.php:99
+msgid "OneDrive Backup"
+msgstr ""
+
+#: admin/views/settings.php:99
+msgid "Automatically upload your backups to Microsoft OneDrive. Personal and business accounts."
+msgstr ""
+
+#: admin/views/settings.php:104
+msgid "FTP / SFTP Backup"
+msgstr ""
+
+#: admin/views/settings.php:104
+msgid "Upload your backups to any FTP or SFTP server automatically."
+msgstr ""
+
+#: admin/views/settings.php:111
+msgid "General Settings"
+msgstr ""
+
+#: admin/views/settings.php:114
+msgid "Maximum Backups to Keep"
+msgstr ""
+
+#: admin/views/settings.php:116
+msgid "Oldest backups are deleted automatically when this limit is exceeded."
+msgstr ""
+
+#: admin/views/settings.php:119
+msgid "ZIP Chunk Size (MB)"
+msgstr ""
+
+#. translators: %d: auto-calculated chunk size in MB
+#: admin/views/settings.php:127
+#, php-format
+msgid "Auto-calculated: %d MB"
+msgstr ""
+
+#: admin/views/settings.php:130
+msgid "Reset to auto"
+msgstr ""
+
+#: admin/views/settings.php:134
+msgid "Recalculate"
+msgstr ""
+
+#: admin/views/settings.php:136
+msgid "Maximum total file size processed per ZIP request. Auto-calculated based on your server's available memory."
+msgstr ""
+
+#: admin/views/settings.php:145
+msgid "Files Per Chunk"
+msgstr ""
+
+#: admin/views/settings.php:148
+msgid "Auto:"
+msgstr ""
+
+#: admin/views/settings.php:148
+msgid "files"
+msgstr ""
+
+#: admin/views/settings.php:153
+msgid "Override"
+msgstr ""
+
+#: admin/views/settings.php:160
+msgid "Auto-calculated from chunk size. Override only if you need a custom value."
+msgstr ""
+
+#: admin/views/settings.php:163
+msgid "Backup Encryption"
+msgstr ""
+
+#: admin/views/settings.php:166
+msgid "Enable AES-256 encryption for all backups"
+msgstr ""
+
+#. translators: <code> tags are intentional HTML
+#: admin/views/settings.php:170
+msgid "When enabled, <code>database.sql</code> inside each backup ZIP is encrypted. The password is stored securely using your WordPress secret keys."
+msgstr ""
+
+#: admin/views/settings.php:173
+msgid "Encryption Password"
+msgstr ""
+
+#: admin/views/settings.php:174
+msgid "(saved — enter new to change)"
+msgstr ""
+
+#: admin/views/settings.php:174
+msgid "Enter a strong password"
+msgstr ""
+
+#: admin/views/settings.php:175
+msgid "If you lose this password, encrypted backups cannot be restored."
+msgstr ""
+
+#: admin/views/settings.php:177
+msgid "Remove Encryption"
+msgstr ""
+
+#: admin/views/settings.php:189
+msgid "Email Notifications"
+msgstr ""
+
+#: admin/views/settings.php:189
+msgid "Get notified by email on backup success or failure. Includes error details for quick diagnosis."
+msgstr ""
+
+#: admin/views/settings.php:196
+msgid "Excluded Folders"
+msgstr ""
+
+#: admin/views/settings.php:197
+msgid "Select folders to exclude from backups. The backup folder is already excluded automatically."
+msgstr ""
+
+#: admin/views/settings.php:200
+msgid "Cache directories"
+msgstr ""
+
+#: admin/views/settings.php:218
+msgid "Server config files"
+msgstr ""
+
+#: admin/views/settings.php:222
+msgid "Skip .ini files in WordPress root (php.ini, .user.ini, etc.)"
+msgstr ""
+
+#: admin/views/settings.php:225
+msgid "These files contain server-specific PHP settings and can break the site after migration. Files inside wp-content/ are not affected."
+msgstr ""
+
+#: admin/views/settings.php:231
+msgid "No folders selected yet."
+msgstr ""
+
+#: admin/views/settings.php:248
+msgid "Access and restore your backups even when WordPress is completely broken — directly from your browser, no admin panel needed."
+msgstr ""
+
+#: admin/views/settings.php:253
+msgid "Create a full staging copy of your live site with one click. Test plugins, themes or major changes safely — then push to live when ready."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:36
+#: includes/class-wpbn-ajax.php:264
+#: includes/class-wpbn-ajax.php:303
+msgid "Security check failed."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:268
+#: includes/class-wpbn-ajax.php:307
+msgid "Invalid backup ID."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:274
+#: includes/class-wpbn-ajax.php:312
+msgid "Backup not found."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:277
+msgid "Backup file not found on disk."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:315
+msgid "Installer template not found."
+msgstr ""
+
+#: includes/class-wpbn-ajax.php:616
+msgid "Saved."
+msgstr ""
+
+#: includes/class-wpbn-backup.php:651
+msgid "General cache — W3TC, WP Super Cache, WP Rocket"
+msgstr ""
+
+#: includes/class-wpbn-backup.php:652
+msgid "Uploads cache — various plugins"
+msgstr ""
+
+#: includes/class-wpbn-backup.php:653
+msgid "Divi cache"
+msgstr ""
+
+#: includes/class-wpbn-backup.php:654
+msgid "WP-Optimize cache"
+msgstr ""
+
+#: includes/class-wpbn-backup.php:655
+msgid "Breeze cache"
+msgstr ""
