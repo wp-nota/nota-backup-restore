@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, zip
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,9 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.1.5 =
+* Fix: Backup log entries now show their real timestamps instead of all showing the finalize/cleanup time
 
 = 2.1.4 =
 * New: Review notice — admin banner shown 14 days after activation (plugin pages only) with remind/dismiss options

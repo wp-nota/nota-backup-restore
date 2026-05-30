@@ -116,10 +116,11 @@ class WPBN_Backup {
             return array( 'success' => false, 'error' => 'Failed to write file list. Check backup directory permissions.' );
         }
 
+        $t = time();
         $pending_db_logs = array(
-            array( 'msg' => 'Backup started — ' . $backup_name, 'level' => 'info' ),
-            array( 'msg' => 'DB export complete', 'level' => 'info' ),
-            array( 'msg' => 'File list: ' . number_format( count( $file_list ) ) . ' files', 'level' => 'info' ),
+            array( 'msg' => 'Backup started — ' . $backup_name, 'level' => 'info', 'time' => $t ),
+            array( 'msg' => 'DB export complete', 'level' => 'info', 'time' => $t ),
+            array( 'msg' => 'File list: ' . number_format( count( $file_list ) ) . ' files', 'level' => 'info', 'time' => $t ),
         );
 
         $chunk_mb        = (int) WPBN_Settings::get( 'chunk_size_mb' );
@@ -334,7 +335,7 @@ class WPBN_Backup {
 
         $done = $offset >= $total;
         if ( $done ) {
-            $state['pending_db_logs'][] = array( 'msg' => 'ZIP complete: ' . number_format( $offset ) . ' / ' . number_format( $total ) . ' files', 'level' => 'info' );
+            $state['pending_db_logs'][] = array( 'msg' => 'ZIP complete: ' . number_format( $offset ) . ' / ' . number_format( $total ) . ' files', 'level' => 'info', 'time' => time() );
             update_option( self::STATE_OPTION, $state, false );
         }
         return array(
@@ -452,7 +453,8 @@ class WPBN_Backup {
         // Flush accumulated logs now that backup_id is known
         if ( $backup_id && class_exists( 'WPBN_Logger' ) ) {
             foreach ( $state['pending_db_logs'] ?? array() as $entry ) {
-                WPBN_Logger::log( $entry['msg'], $entry['level'] ?? 'info', $backup_id );
+                $ts = isset( $entry['time'] ) ? gmdate( 'Y-m-d H:i:s', (int) $entry['time'] ) : null;
+                WPBN_Logger::log( $entry['msg'], $entry['level'] ?? 'info', $backup_id, $ts );
             }
             WPBN_Logger::log( 'Backup complete — ' . wpbn_size_format( $filesize ) . ' in ' . $dur_hr, 'info', $backup_id );
             WPBN_Logger::prune( (int) WPBN_Settings::get( 'log_retention_backups' ) ?: 20 );

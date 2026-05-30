@@ -13,7 +13,7 @@ class WPBN_Logger {
      * @param string   $level     'info' | 'warning' | 'error'
      * @param int|null $backup_id Null for system-level events.
      */
-    public static function log( string $message, string $level = 'info', ?int $backup_id = null ): void {
+    public static function log( string $message, string $level = 'info', ?int $backup_id = null, ?string $created_at = null ): void {
         global $wpdb;
         $wpdb->insert(
             $wpdb->prefix . self::TABLE,
@@ -21,7 +21,7 @@ class WPBN_Logger {
                 'backup_id'  => $backup_id ?: null,
                 'level'      => in_array( $level, array( 'info', 'warning', 'error' ), true ) ? $level : 'info',
                 'message'    => $message,
-                'created_at' => current_time( 'mysql' ),
+                'created_at' => $created_at ?? current_time( 'mysql' ),
             ),
             array( '%d', '%s', '%s', '%s' )
         );
