@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, zip
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.5
+Stable tag: 2.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,7 @@ Full site backup plugin. Back up files + database with one click. Chunked ZIP cr
 = Free Features =
 
 * **One-click full backup** — all WordPress files + database in a single ZIP
+* **Selective backup** — database only or files only
 * **Chunked ZIP creation** — never times out, even on large sites
 * **Configurable chunk settings** — files per chunk and MB per chunk
 * **AES-256 encryption** for database backups
@@ -35,7 +36,6 @@ The following features require the [Pro version](https://www.wp-nota.com/pricing
 * **Admin panel restore** — one-click restore directly in WordPress
 * **Emergency Recovery** — standalone restore page that works even when WordPress is broken
 * **Email notifications** — success and failure alerts
-* **Selective backup** — database only or files only
 
 = How It Works =
 
@@ -102,6 +102,11 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.1.6 =
+* New: Selective backup — Database Only and Files Only modes are now free (with table/folder picker)
+* Fix: Checkbox visually not showing as checked in Settings > Exclusions
+* Fix: Plugin language files now load correctly (load_textdomain with direct path)
 
 = 2.1.5 =
 * Fix: Backup log entries now show their real timestamps instead of all showing the finalize/cleanup time

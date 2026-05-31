@@ -64,19 +64,43 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
         <span class="wpbn-btype-title"><?php esc_html_e( 'Full', 'nota-backup-restore' ); ?></span>
         <span class="wpbn-btype-desc"><?php esc_html_e( 'Files + Database', 'nota-backup-restore' ); ?></span>
        </button>
-       <button type="button" class="wpbn-btype-card wpbn-premium-row" data-btype="db_only" disabled>
+       <button type="button" class="wpbn-btype-card" data-btype="db_only">
         <span class="wpbn-btype-icon">🗃️</span>
         <span class="wpbn-btype-title"><?php esc_html_e( 'Database Only', 'nota-backup-restore' ); ?></span>
         <span class="wpbn-btype-desc"><?php esc_html_e( 'SQL tables only', 'nota-backup-restore' ); ?></span>
-        <a href="<?php echo esc_url( wpbn_upgrade_url() ); ?>" target="_blank" class="wpbn-pro-badge" style="margin-top:4px;" onclick="event.stopPropagation()">PRO</a>
        </button>
-       <button type="button" class="wpbn-btype-card wpbn-premium-row" data-btype="files_only" disabled>
+       <button type="button" class="wpbn-btype-card" data-btype="files_only">
         <span class="wpbn-btype-icon">📂</span>
         <span class="wpbn-btype-title"><?php esc_html_e( 'Files Only', 'nota-backup-restore' ); ?></span>
         <span class="wpbn-btype-desc"><?php esc_html_e( 'No database', 'nota-backup-restore' ); ?></span>
-        <a href="<?php echo esc_url( wpbn_upgrade_url() ); ?>" target="_blank" class="wpbn-pro-badge" style="margin-top:4px;" onclick="event.stopPropagation()">PRO</a>
        </button>
       </div>
+      <!-- Table picker — shown only when Database Only is selected -->
+      <div id="wpbn-table-picker" style="display:none;margin-top:10px;">
+       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:8px;">
+        <span class="form-text" style="margin:0;" id="wpbn-table-picker-hint"><?php esc_html_e( 'All tables will be backed up.', 'nota-backup-restore' ); ?></span>
+        <div style="display:flex;gap:4px;flex-shrink:0;">
+         <button type="button" id="wpbn-table-picker-all" class="btn btn-outline-secondary btn-sm" style="font-size:.75rem;padding:2px 8px;"><?php esc_html_e( 'Select All', 'nota-backup-restore' ); ?></button>
+         <button type="button" id="wpbn-table-picker-none" class="btn btn-outline-secondary btn-sm" style="font-size:.75rem;padding:2px 8px;"><?php esc_html_e( 'Deselect All', 'nota-backup-restore' ); ?></button>
+        </div>
+       </div>
+       <div id="wpbn-table-picker-list" style="max-height:260px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;background:#fafafa;"></div>
+      </div>
+
+      <!-- File picker — shown only when Files Only is selected -->
+      <div id="wpbn-file-picker" style="display:none;margin-top:10px;">
+       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:8px;">
+        <span class="form-text" style="margin:0;" id="wpbn-picker-hint"><?php esc_html_e( 'No items selected — all files will be backed up and exclusion rules apply.', 'nota-backup-restore' ); ?></span>
+        <div style="display:flex;gap:4px;flex-shrink:0;">
+         <button type="button" id="wpbn-picker-select-all" class="btn btn-outline-secondary btn-sm" style="font-size:.75rem;padding:2px 8px;"><?php esc_html_e( 'Select All', 'nota-backup-restore' ); ?></button>
+         <button type="button" id="wpbn-picker-select-none" class="btn btn-outline-secondary btn-sm" style="font-size:.75rem;padding:2px 8px;"><?php esc_html_e( 'Deselect All', 'nota-backup-restore' ); ?></button>
+        </div>
+       </div>
+       <div id="wpbn-file-picker-tree" style="max-height:260px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;background:#fafafa;">
+        <div style="color:#94a3b8;font-size:.85rem;"><?php esc_html_e( 'Loading…', 'nota-backup-restore' ); ?></div>
+       </div>
+      </div>
+
       <div id="wpbn-exclusion-notice" class="form-text mt-1" style="display:none;">
        <?php if ( ! empty( $exclude_paths ) ): ?>
        📋 <a href="<?php echo esc_url( admin_url( 'admin.php?page=wp-backup-nota-settings&tab=exclude' ) ); ?>"><?php esc_html_e( 'Exclusion rules', 'nota-backup-restore' ); ?></a> <?php

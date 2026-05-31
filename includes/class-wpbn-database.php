@@ -9,7 +9,7 @@ class WPBN_Database {
      * Each batch is appended to disk immediately — no full SQL string held in memory.
      * Safe for very large databases (1 GB+).
      */
-    public static function export_to_file( string $path ): void {
+    public static function export_to_file( string $path, array $selected_tables = array() ): void {
         global $wpdb;
 
         $header  = "-- WP Backup Nota | Database Export\n";
@@ -23,7 +23,10 @@ class WPBN_Database {
 
         file_put_contents( $path, $header );
 
-        $tables = $wpdb->get_col( 'SHOW TABLES' );
+        $all_tables = $wpdb->get_col( 'SHOW TABLES' );
+        $tables     = ! empty( $selected_tables )
+            ? array_values( array_intersect( $all_tables, $selected_tables ) )
+            : $all_tables;
         foreach ( $tables as $table ) {
             self::dump_table_to_file( $path, $table );
         }

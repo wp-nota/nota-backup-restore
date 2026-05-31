@@ -148,14 +148,29 @@ jQuery(function($){
 
         var selectiveType = $('#wpbn-backup-type').val() || 'full';
         var notes         = $('#wpbn-notes').val();
+        var selPaths      = [];
+        if (selectiveType === 'files_only') {
+            $('#wpbn-file-picker-tree .wpbn-picker-cb:checked:not(:disabled)').each(function() {
+                selPaths.push($(this).val());
+            });
+        }
+        var selTables = [];
+        if (selectiveType === 'db_only') {
+            $('#wpbn-table-picker-list .wpbn-table-cb:checked').each(function() {
+                selTables.push($(this).val());
+            });
+        }
 
         // ── Step 1: init (DB export, file list) — triggers background process ──
         setProgress(2, wpbn.i18n.preparing_backup);
 
         $.post(ajaxUrl, {
-            action : 'wpbn_start_backup',
-            nonce  : nonce,
-            notes  : notes,
+            action          : 'wpbn_start_backup',
+            nonce           : nonce,
+            notes           : notes,
+            backup_type     : selectiveType,
+            selected_paths  : JSON.stringify(selPaths),
+            selected_tables : JSON.stringify(selTables),
         }, function(res) {
             if (!res.success) {
                 // Premium gate: redirect to upgrade page
@@ -685,13 +700,169 @@ jQuery(function($){
         $('#wpbn-backup-type').val($(this).data('btype')).trigger('change');
     });
 
-    function updateExclusionNotice() {
-        var val = $('#wpbn-backup-type').val();
+    var filePickerLoaded  = false;
+    var tablePickerLoaded = false;
+
+    function updatePickerHint() {
+        var hasSelected = $('#wpbn-file-picker-tree .wpbn-picker-cb:checked:not(:disabled)').length > 0;
+        $('#wpbn-picker-hint').text(hasSelected ? wpbn.i18n.picker_hint_sel : wpbn.i18n.picker_hint_empty);
         var $notice = $('#wpbn-exclusion-notice');
-        if (val === 'full' || val === 'files_only') {
-            $notice.show();
-        } else {
+        if (hasSelected) { $notice.hide(); } else { $notice.show(); }
+    }
+
+    function updateTablePickerHint() {
+        var total    = $('#wpbn-table-picker-list .wpbn-table-cb').length;
+        var selected = $('#wpbn-table-picker-list .wpbn-table-cb:checked').length;
+        $('#wpbn-table-picker-hint').text(
+            selected === total ? wpbn.i18n.table_hint_all : wpbn.i18n.table_hint_sel
+        );
+    }
+
+    function buildTablePickerList() {
+        var $list = $('#wpbn-table-picker-list');
+        if (!wpbn.db_tables || !wpbn.db_tables.length) {
+            $list.html('<div style="padding:6px 10px;color:#94a3b8;font-size:.82rem;">No tables found.</div>');
+            return;
+        }
+        var $ul = $('<ul class="wpbn-tree-node">');
+        $.each(wpbn.db_tables, function(_, tbl) {
+            var $li  = $('<li>');
+            var $row = $('<div class="wpbn-tree-row">');
+            var $cb  = $('<input type="checkbox" class="wpbn-table-cb wpbn-tree-cb">')
+                .val(tbl).prop('checked', true);
+            $cb.on('change', updateTablePickerHint);
+            $row.append($('<span class="wpbn-toggle empty">'));
+            $row.append($cb);
+            $row.append($('<span class="wpbn-tree-icon">').text('🗃️'));
+            $row.append($('<span class="wpbn-tree-name">').html(
+                '<code style="font-size:.78rem;">' + escHtml(tbl) + '</code>'
+            ));
+            $li.append($row);
+            $ul.append($li);
+        });
+        $list.html($ul);
+        updateTablePickerHint();
+    }
+
+    function loadBrowseDirLevel(path, $container, $parentCb) {
+        $container.html('<div style="padding:6px 10px;color:#94a3b8;font-size:.82rem;">' + wpbn.i18n.loading + '</div>');
+        $.post(ajaxUrl, { action: 'wpbn_browse_dir', nonce: nonce, path: path }, function(res) {
+            if (!res.success || !res.data.items || !res.data.items.length) {
+                $container.html('<div style="padding:6px 10px;color:#94a3b8;font-size:.82rem;">' + wpbn.i18n.no_subdirs + '</div>');
+                return;
+            }
+            var isParentChecked = $parentCb ? $parentCb.prop('checked') : false;
+            var $ul = $('<ul class="wpbn-tree-node">');
+            $.each(res.data.items, function(_, item) {
+                $ul.append(buildPickerRow(item, isParentChecked, isParentChecked));
+            });
+            $container.html($ul);
+        }).fail(function() {
+            $container.html('<div style="padding:6px 10px;color:#d63638;font-size:.82rem;">' + wpbn.i18n.failed_to_load + '</div>');
+        });
+    }
+
+    function buildPickerRow(item, initialChecked, initialDisabled) {
+        var icon = item.is_file ? '📄' : '📁';
+        var $li  = $('<li>');
+        var $row = $('<div class="wpbn-tree-row">');
+
+        var $toggle = $('<span>').addClass('wpbn-toggle' + (item.has_children ? '' : ' empty'))
+                                 .html(item.has_children ? '▶' : '');
+        $row.append($toggle);
+
+        var $cb = $('<input type="checkbox" class="wpbn-picker-cb wpbn-tree-cb">')
+            .val(item.path)
+            .prop('checked', !!initialChecked)
+            .prop('disabled', !!initialDisabled);
+        $row.append($cb);
+
+        $row.append($('<span class="wpbn-tree-icon">').text(icon));
+        $row.append($('<span class="wpbn-tree-name">').html(
+            '<code style="font-size:.78rem;">' + escHtml(item.name) + (item.is_file ? '' : '/') + '</code>'
+        ));
+
+        $li.append($row);
+
+        if (item.has_children) {
+            var $kids = $('<div class="wpbn-children">');
+            $li.append($kids);
+
+            $toggle.on('click', function(e) {
+                e.stopPropagation();
+                var isOpen = $kids.hasClass('open');
+                if (!isOpen) {
+                    $kids.addClass('open');
+                    $toggle.html('▼');
+                    if ($kids.children().length === 0) {
+                        loadBrowseDirLevel(item.path, $kids, $cb);
+                    }
+                } else {
+                    $kids.removeClass('open');
+                    $toggle.html('▶');
+                }
+            });
+        }
+
+        $cb.on('change', function() {
+            var checked = $(this).prop('checked');
+            if (checked) {
+                $li.find('.wpbn-children .wpbn-picker-cb').prop('disabled', true).prop('checked', true);
+            } else {
+                $li.children('.wpbn-children').find('> ul > li > .wpbn-tree-row .wpbn-picker-cb').prop('disabled', false);
+            }
+            updatePickerHint();
+        });
+
+        return $li;
+    }
+
+    $('#wpbn-picker-select-all').on('click', function() {
+        $('#wpbn-file-picker-tree > ul > li > .wpbn-tree-row .wpbn-picker-cb').each(function() {
+            $(this).prop('checked', true).trigger('change');
+        });
+    });
+    $('#wpbn-picker-select-none').on('click', function() {
+        $('#wpbn-file-picker-tree > ul > li > .wpbn-tree-row .wpbn-picker-cb').each(function() {
+            $(this).prop('checked', false).trigger('change');
+        });
+    });
+
+    $('#wpbn-table-picker-all').on('click', function() {
+        $('#wpbn-table-picker-list .wpbn-table-cb').prop('checked', true);
+        updateTablePickerHint();
+    });
+    $('#wpbn-table-picker-none').on('click', function() {
+        $('#wpbn-table-picker-list .wpbn-table-cb').prop('checked', false);
+        updateTablePickerHint();
+    });
+
+    function updateExclusionNotice() {
+        var val      = $('#wpbn-backup-type').val();
+        var $notice  = $('#wpbn-exclusion-notice');
+        var $picker  = $('#wpbn-file-picker');
+        var $tpicker = $('#wpbn-table-picker');
+        if (val === 'files_only') {
+            $picker.show();
+            $tpicker.hide();
+            if (!filePickerLoaded) {
+                loadBrowseDirLevel('', $('#wpbn-file-picker-tree'), null);
+                filePickerLoaded = true;
+            }
+            updatePickerHint();
+        } else if (val === 'db_only') {
+            $picker.hide();
+            $tpicker.show();
             $notice.hide();
+            if (!tablePickerLoaded) {
+                buildTablePickerList();
+                tablePickerLoaded = true;
+            }
+            updateTablePickerHint();
+        } else {
+            $picker.hide();
+            $tpicker.hide();
+            if (val === 'full') { $notice.show(); } else { $notice.hide(); }
         }
     }
     $('#wpbn-backup-type').on('change', updateExclusionNotice);

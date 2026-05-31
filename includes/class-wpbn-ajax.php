@@ -26,6 +26,7 @@ class WPBN_Ajax {
         add_action( 'wp_ajax_wpbn_site_changes',         array( $this, 'site_changes' ) );
         add_action( 'wp_ajax_wpbn_dismiss_review',       array( $this, 'dismiss_review' ) );
         add_action( 'wp_ajax_wpbn_remind_review',        array( $this, 'remind_review' ) );
+        add_action( 'wp_ajax_wpbn_browse_dir',           array( $this, 'browse_dir' ) );
     }
 
     private function check_permissions() {
@@ -50,9 +51,22 @@ class WPBN_Ajax {
             delete_option( WPBN_Backup::STATE_OPTION );
         }
 
+        $allowed_types = array( 'full', 'db_only', 'files_only' );
+        $backup_type   = sanitize_key( wp_unslash( $_POST['backup_type'] ?? 'full' ) );
+        if ( ! in_array( $backup_type, $allowed_types, true ) ) {
+            $backup_type = 'full';
+        }
+
+        $paths_raw       = json_decode( wp_unslash( $_POST['selected_paths']  ?? '[]' ), true );
+        $selected_paths  = is_array( $paths_raw )  ? array_map( 'sanitize_text_field', $paths_raw )  : array();
+        $tables_raw      = json_decode( wp_unslash( $_POST['selected_tables'] ?? '[]' ), true );
+        $selected_tables = is_array( $tables_raw ) ? array_map( 'sanitize_text_field', $tables_raw ) : array();
+
         $result = WPBN_Backup::step_init( array(
-            'notes'       => sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) ),
-            'backup_type' => 'manual',
+            'notes'           => sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) ),
+            'backup_type'     => $backup_type,
+            'selected_paths'  => $selected_paths,
+            'selected_tables' => $selected_tables,
         ) );
 
         if ( $result['success'] ) {
@@ -724,5 +738,79 @@ class WPBN_Ajax {
         $this->check_permissions();
         update_option( 'wpbn_review_remind_after', time() + 7 * DAY_IN_SECONDS );
         wp_send_json_success();
+    }
+
+    public function browse_dir() {
+        $this->check_permissions();
+
+        $requested = sanitize_text_field( wp_unslash( $_POST['path'] ?? '' ) );
+        $base      = rtrim( str_replace( '\\', '/', ABSPATH ), '/' );
+
+        if ( $requested === '' ) {
+            $abs_dir = $base;
+        } else {
+            $requested = ltrim( str_replace( '\\', '/', $requested ), '/' );
+            if ( strpos( $requested, '..' ) !== false ) {
+                wp_send_json_error( array( 'error' => 'Invalid path.' ) );
+                return;
+            }
+            $abs_dir = $base . '/' . $requested;
+            $real    = realpath( $abs_dir );
+            if ( ! $real || strpos( rtrim( str_replace( '\\', '/', $real ), '/' ), $base ) !== 0 ) {
+                wp_send_json_error( array( 'error' => 'Invalid path.' ) );
+                return;
+            }
+            $abs_dir = $real;
+        }
+
+        if ( ! is_dir( $abs_dir ) ) {
+            wp_send_json_error( array( 'error' => 'Directory not found.' ) );
+            return;
+        }
+
+        $scan = @scandir( $abs_dir );
+        if ( ! $scan ) {
+            wp_send_json_success( array( 'items' => array() ) );
+            return;
+        }
+
+        $items = array();
+        foreach ( $scan as $entry ) {
+            if ( $entry === '.' || $entry === '..' ) continue;
+            if ( strpos( $entry, '.' ) === 0 ) continue;
+
+            $full    = rtrim( str_replace( '\\', '/', $abs_dir ), '/' ) . '/' . $entry;
+            $is_file = is_file( $full );
+            $is_dir  = is_dir( $full );
+            if ( ! $is_file && ! $is_dir ) continue;
+
+            $rel          = ltrim( substr( $full, strlen( $base ) ), '/' );
+            $has_children = false;
+            if ( $is_dir ) {
+                $sub = @scandir( $full );
+                if ( $sub ) {
+                    foreach ( $sub as $s ) {
+                        if ( $s === '.' || $s === '..' || strpos( $s, '.' ) === 0 ) continue;
+                        $has_children = true;
+                        break;
+                    }
+                }
+            }
+
+            $items[] = array(
+                'name'         => $entry,
+                'path'         => $rel,
+                'is_file'      => $is_file,
+                'has_children' => $has_children,
+            );
+        }
+
+        usort( $items, function( $a, $b ) {
+            $ai = (int) $a['is_file'];
+            $bi = (int) $b['is_file'];
+            return $ai !== $bi ? $ai - $bi : strcmp( $a['name'], $b['name'] );
+        } );
+
+        wp_send_json_success( array( 'items' => $items ) );
     }
 }

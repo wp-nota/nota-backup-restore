@@ -74,11 +74,13 @@ class WPBN_Admin {
         wp_enqueue_style(  'wpbn-admin', WPBN_PLUGIN_URL . 'assets/css/admin.css', array( 'wpbn-bootstrap' ), WPBN_VERSION );
         wp_enqueue_script( 'wpbn-admin', WPBN_PLUGIN_URL . 'assets/js/admin.js',   array( 'jquery' ), WPBN_VERSION, true );
 
+        global $wpdb;
         wp_localize_script( 'wpbn-admin', 'wpbn', array(
             'ajax_url'          => admin_url( 'admin-ajax.php' ),
             'nonce'             => wp_create_nonce( 'wpbn_nonce' ),
             'backup_dir_url'    => WPBN_BACKUP_URL,
             'upgrade_url'       => wpbn_upgrade_url(),
+            'db_tables'         => $wpdb->get_col( 'SHOW TABLES' ),
             'review_url'        => 'https://wordpress.org/support/plugin/nota-backup-restore/reviews/#new-post',
             'show_review_prompt' => get_option( 'wpbn_review_dismissed' ) ? false : true,
             'i18n'           => array(
@@ -145,6 +147,11 @@ class WPBN_Admin {
                 'sc_uploads'         => __( 'New uploads', 'nota-backup-restore' ),
                 'review_prompt'      => __( 'Enjoying the plugin? Leave a quick ★★★★★ review — it really helps!', 'nota-backup-restore' ),
                 'review_btn'         => __( 'Leave a Review', 'nota-backup-restore' ),
+                'no_subdirs'         => __( '📂 No subdirectories in this folder.', 'nota-backup-restore' ),
+                'picker_hint_empty'  => __( 'No items selected — all files will be backed up and exclusion rules apply.', 'nota-backup-restore' ),
+                'picker_hint_sel'    => __( 'Only selected items will be backed up. Exclusion rules are ignored.', 'nota-backup-restore' ),
+                'table_hint_all'     => __( 'All tables will be backed up.', 'nota-backup-restore' ),
+                'table_hint_sel'     => __( 'Only selected tables will be backed up.', 'nota-backup-restore' ),
             ),
         ) );
     }

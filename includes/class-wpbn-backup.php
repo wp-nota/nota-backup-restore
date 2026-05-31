@@ -32,10 +32,16 @@ class WPBN_Backup {
         @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
 
         $defaults = array(
-            'notes'       => '',
-            'backup_type' => 'manual',
+            'notes'           => '',
+            'backup_type'     => 'manual',
+            'selected_paths'  => array(),
+            'selected_tables' => array(),
         );
         $args = wp_parse_args( $args, $defaults );
+
+        $backup_type = in_array( $args['backup_type'], array( 'full', 'db_only', 'files_only' ), true )
+            ? $args['backup_type']
+            : 'full';
 
         if ( ! file_exists( WPBN_BACKUP_DIR ) ) {
             wp_mkdir_p( WPBN_BACKUP_DIR );
@@ -47,8 +53,11 @@ class WPBN_Backup {
         $tmp_dir       = WPBN_BACKUP_DIR . '/tmp_' . $backup_name;
         wp_mkdir_p( $tmp_dir );
 
-        // DB export
-        WPBN_Database::export_to_file( $tmp_dir . '/database.sql' );
+        // DB export — skipped for files_only
+        if ( $backup_type !== 'files_only' ) {
+            $selected_tables = array_filter( array_map( 'sanitize_text_field', (array) ( $args['selected_tables'] ?? array() ) ) );
+            WPBN_Database::export_to_file( $tmp_dir . '/database.sql', $selected_tables );
+        }
 
         // Manifest
         $manifest = array(
@@ -58,9 +67,10 @@ class WPBN_Backup {
             'wp_version'     => get_bloginfo( 'version' ),
             'db_prefix'      => $GLOBALS['wpdb']->prefix,
             'created'        => gmdate( 'Y-m-d H:i:s' ),
-            'db_file'        => 'database.sql',
+            'db_file'        => ( $backup_type !== 'files_only' ) ? 'database.sql' : null,
             'old_paths'      => array( rtrim( ABSPATH, '/' ) ), // ABSPATH is the WordPress installation root — no WP API returns this path
             'encrypted'      => false,
+            'backup_type'    => $backup_type,
         );
         if ( file_put_contents( $tmp_dir . '/wpbn-manifest.json', json_encode( $manifest, JSON_PRETTY_PRINT ) ) === false ) {
             return array( 'success' => false, 'error' => 'Failed to write manifest file. Check backup directory permissions.' );
@@ -68,7 +78,7 @@ class WPBN_Backup {
 
         // Encryption — handle before ZIP creation so finalize never needs to open the ZIP
         $enc_password = self::resolve_encryption_password();
-        if ( $enc_password !== '' && extension_loaded( 'openssl' ) ) {
+        if ( $backup_type !== 'files_only' && $enc_password !== '' && extension_loaded( 'openssl' ) ) {
             $sql_plain = file_get_contents( $tmp_dir . '/database.sql' );
             $key = hash( 'sha256', $enc_password, true );
             $iv  = random_bytes( 16 );
@@ -107,21 +117,34 @@ class WPBN_Backup {
             unset( $zip );
         }
 
+        // File list — empty for db_only
         $exclude = array_merge(
             (array) WPBN_Settings::get( 'exclude_paths' ),
             array( WPBN_BACKUP_DIR )
         );
-        $file_list = self::build_file_list( ABSPATH, $exclude ); // ABSPATH is the WordPress installation root — backing up all WP files requires it
+        $file_list    = array();
+        $selected_paths = array_filter( (array) ( $args['selected_paths'] ?? array() ) );
+        if ( $backup_type === 'db_only' ) {
+            $file_list = array();
+        } elseif ( ! empty( $selected_paths ) && $backup_type === 'files_only' ) {
+            $file_list = self::expand_selected_paths( $selected_paths );
+        } else {
+            $file_list = self::build_file_list( ABSPATH, $exclude ); // ABSPATH is the WordPress installation root — backing up all WP files requires it
+        }
         if ( file_put_contents( $tmp_dir . '/file_list.json', json_encode( $file_list ) ) === false ) {
             return array( 'success' => false, 'error' => 'Failed to write file list. Check backup directory permissions.' );
         }
 
         $t = time();
         $pending_db_logs = array(
-            array( 'msg' => 'Backup started — ' . $backup_name, 'level' => 'info', 'time' => $t ),
-            array( 'msg' => 'DB export complete', 'level' => 'info', 'time' => $t ),
-            array( 'msg' => 'File list: ' . number_format( count( $file_list ) ) . ' files', 'level' => 'info', 'time' => $t ),
+            array( 'msg' => 'Backup started — ' . $backup_name . ' (' . $backup_type . ')', 'level' => 'info', 'time' => $t ),
         );
+        if ( $backup_type !== 'files_only' ) {
+            $pending_db_logs[] = array( 'msg' => 'DB export complete', 'level' => 'info', 'time' => $t );
+        }
+        if ( $backup_type !== 'db_only' ) {
+            $pending_db_logs[] = array( 'msg' => 'File list: ' . number_format( count( $file_list ) ) . ' files', 'level' => 'info', 'time' => $t );
+        }
 
         $chunk_mb        = (int) WPBN_Settings::get( 'chunk_size_mb' );
         $chunk_mb        = max( 2, min( $chunk_mb, 50 ) );
@@ -142,7 +165,7 @@ class WPBN_Backup {
             'files_per_chunk'  => $files_per_chunk,
             'exclude_paths'    => $exclude,
             'notes'       => $args['notes'],
-            'backup_type'         => $args['backup_type'],
+            'backup_type' => $backup_type,
             'start_time'       => microtime( true ),
             'pending_db_logs'  => $pending_db_logs,
             'last_heartbeat'   => time(),
@@ -656,5 +679,36 @@ class WPBN_Backup {
             'wpo-cache'     => __( 'WP-Optimize cache', 'nota-backup-restore' ),
             'breeze-cache'  => __( 'Breeze cache', 'nota-backup-restore' ),
         );
+    }
+
+    private static function expand_selected_paths( array $selected_paths ): array {
+        $base       = rtrim( str_replace( '\\', '/', ABSPATH ), '/' );
+        $backup_dir = rtrim( str_replace( '\\', '/', WPBN_BACKUP_DIR ), '/' );
+        $list       = array();
+        foreach ( $selected_paths as $rel ) {
+            $rel = ltrim( str_replace( '\\', '/', $rel ), '/' );
+            if ( $rel === '' || strpos( $rel, '..' ) !== false ) continue;
+            $abs = $base . '/' . $rel;
+            if ( is_file( $abs ) ) {
+                $list[] = $abs;
+            } elseif ( is_dir( $abs ) ) {
+                if ( rtrim( str_replace( '\\', '/', $abs ), '/' ) === $backup_dir ) continue;
+                try {
+                    $it = new RecursiveIteratorIterator(
+                        new RecursiveDirectoryIterator( $abs, RecursiveDirectoryIterator::SKIP_DOTS ),
+                        RecursiveIteratorIterator::SELF_FIRST
+                    );
+                    foreach ( $it as $f ) {
+                        if ( ! $f->isFile() ) continue;
+                        $fp = rtrim( str_replace( '\\', '/', $f->getRealPath() ), '/' );
+                        if ( strpos( $fp, $backup_dir . '/' ) === 0 ) continue;
+                        $list[] = $f->getRealPath();
+                    }
+                } catch ( Exception $e ) {
+                    // skip unreadable directories
+                }
+            }
+        }
+        return array_values( array_unique( $list ) );
     }
 }
