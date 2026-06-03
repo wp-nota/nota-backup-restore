@@ -1,6 +1,6 @@
 === Nota Backup & Restore ===
 Contributors: wpnota
-Tags: backup, restore, migration, database, zip
+Tags: backup, restore, migration, database, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 2.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Full site backup plugin. Back up files + database with one click. Chunked ZIP creation — never fails due to PHP timeouts.
+Complete WordPress backup plugin. Back up your entire site — files + database — with one click. Works on any shared hosting.
 
 == Description ==
 
@@ -80,6 +80,12 @@ Yes. The database is encrypted with AES-256-CBC. The encryption key is derived f
 
 = Can I restore to a different domain? =
 Yes. The standalone installer handles full migrations. It replaces all URLs and paths — including inside serialized PHP data — so WordPress loads correctly on the new domain.
+
+= How do I migrate WordPress to a new host? =
+Download the backup ZIP and the Installer PHP file from the backup list. Upload both to the new server's web root, open the installer in your browser, enter the new database credentials and site URL, and the wizard handles the rest — including replacing all URLs in the database.
+
+= How do I backup WordPress for free? =
+Install Nota Backup & Restore, go to Nota Backup in the WordPress admin sidebar, and click Start Backup. No account or configuration required. Full site backups (files + database) are completely free.
 
 = Does the free version connect to any external services? =
 No. The free version makes no external API calls. The only external link is the "Upgrade to Pro" button, which opens `https://www.wp-nota.com/pricing/` in a new tab.
