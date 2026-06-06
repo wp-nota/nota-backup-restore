@@ -152,6 +152,8 @@ class WPBN_Admin {
                 'picker_hint_sel'    => __( 'Only selected items will be backed up. Exclusion rules are ignored.', 'nota-backup-restore' ),
                 'table_hint_all'     => __( 'All tables will be backed up.', 'nota-backup-restore' ),
                 'table_hint_sel'     => __( 'Only selected tables will be backed up.', 'nota-backup-restore' ),
+                /* translators: 1: files processed, 2: total files, 3: percentage */
+                'log_zip_progress'   => __( '{offset} / {total} files ({percent}%)', 'nota-backup-restore' ),
             ),
         ) );
     }

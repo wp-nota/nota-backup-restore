@@ -10,13 +10,38 @@ jQuery(function($){
     var $progress  = $('#wpbn-progress');
     var $bar       = $('#wpbn-progress-inner');
     var $progMsg   = $('#wpbn-progress-msg');
+    var $actLog    = $('#wpbn-activity-log');
+    var logCursor  = 0;
 
     function setProgress(pct, msg) {
         $bar.css('width', Math.min(pct, 100) + '%');
         if (msg) $progMsg.html(msg);
     }
 
+    function addLog(level, msg) {
+        var colors = { info: '#58a6ff', warning: '#d29922', error: '#f85149' };
+        var color  = colors[level] || '#8b949e';
+        var now    = new Date();
+        var pad    = function(n){ return String(n).padStart(2,'0'); };
+        var ts     = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+        var $line  = $('<div>').html(
+            '<span style="color:#484f58;">' + ts + '</span> '
+            + '<span style="color:' + color + ';">[' + level + ']</span> '
+            + $('<span>').text(msg).html()
+        );
+        $actLog.append($line);
+        $actLog[0].scrollTop = $actLog[0].scrollHeight;
+    }
+
+    function applyLogLines(lines, newCursor) {
+        if (lines && lines.length) {
+            $.each(lines, function(_, l) { addLog(l.level || 'info', l.msg); });
+        }
+        if (typeof newCursor === 'number') logCursor = newCursor;
+    }
+
     function fail(msg) {
+        addLog('error', msg);
         setProgress(100, '❌ ' + msg);
         $bar.css('background', '#d63638');
         $backupBtn.prop('disabled', false);
@@ -28,6 +53,9 @@ jQuery(function($){
                     + ' (' + escHtml(data.filesize_hr || '—') + ')';
         if (data.duration) doneMsg += ' — ⏱ ' + escHtml(data.duration);
         setProgress(100, doneMsg);
+        var logDone = '✅ ' + (data.filename || '') + ' — ' + (data.filesize_hr || '');
+        if (data.duration) logDone += ' — ' + data.duration;
+        addLog('info', logDone);
         $backupBtn.prop('disabled', false);
         $('#wpbn-cleanup-orphans').prop('disabled', false);
         refreshBackupList();
@@ -145,6 +173,9 @@ jQuery(function($){
         $('#wpbn-cleanup-orphans').prop('disabled', true);
         $progress.show();
         $bar.css('background', '#2271b1');
+        $actLog.empty().show();
+        logCursor = 0;
+        addLog('info', wpbn.i18n.preparing_backup.replace(/^⏳ /, ''));
 
         var selectiveType = $('#wpbn-backup-type').val() || 'full';
         var notes         = $('#wpbn-notes').val();
@@ -194,8 +225,9 @@ jQuery(function($){
             var chunkErrors = 0;
             function runChunk() {
                 $.post(ajaxUrl, {
-                    action : 'wpbn_run_backup_bg',
-                    nonce  : nonce,
+                    action     : 'wpbn_run_backup_bg',
+                    nonce      : nonce,
+                    log_cursor : logCursor,
                 }, function(res) {
                     chunkErrors = 0;
 
@@ -205,6 +237,7 @@ jQuery(function($){
                     }
 
                     var d = res.data;
+                    applyLogLines(d.log_lines, d.log_cursor);
 
                     if (d.status === 'done') {
                         // Backup completed
@@ -220,6 +253,10 @@ jQuery(function($){
                         if (d.total) { totalFiles = d.total; }
                         var pct = 5 + (d.percent || 0) * 0.85;
                         setProgress(pct, wpbn.i18n.adding_files + ' (' + (d.offset || 0) + ' / ' + totalFiles + ')');
+                        addLog('info', wpbn.i18n.log_zip_progress
+                            .replace('{offset}',  d.offset || 0)
+                            .replace('{total}',   d.total || totalFiles)
+                            .replace('{percent}', Math.round(d.percent || 0)));
                         setTimeout(runChunk, 500);
                     } else {
                         // Unknown status — try again
@@ -565,7 +602,7 @@ jQuery(function($){
     /* ── Page-load: detect ongoing backup ────────────── */
     function checkOngoingBackup() {
         if (!$backupBtn.length) return;
-        $.post(ajaxUrl, { action: 'wpbn_backup_status', nonce: nonce }, function(res) {
+        $.post(ajaxUrl, { action: 'wpbn_backup_status', nonce: nonce, log_cursor: 0 }, function(res) {
             if (!res.success) return;
             var d = res.data;
             if (d.stale) {
@@ -583,6 +620,8 @@ jQuery(function($){
                 $('#wpbn-cleanup-orphans').prop('disabled', true);
                 $progress.show();
                 $bar.css('background', '#2271b1');
+                $actLog.empty().show();
+                applyLogLines(d.log_lines, d.log_cursor);
                 setProgress(
                     5 + (d.percent || 0) * 0.85,
                     wpbn.i18n.adding_files + ' (' + (d.offset||0) + ' / ' + (d.total||0) + ')'
@@ -606,12 +645,14 @@ jQuery(function($){
             $backupBtn.prop('disabled', false);
             $('#wpbn-cleanup-orphans').prop('disabled', false);
             $progress.hide();
+            $actLog.hide();
             return;
         }
         setTimeout(function() {
-            $.post(ajaxUrl, { action: 'wpbn_backup_status', nonce: nonce }, function(res) {
+            $.post(ajaxUrl, { action: 'wpbn_backup_status', nonce: nonce, log_cursor: logCursor }, function(res) {
                 if (!res.success) { pollBackupStatus(); return; }
                 var d = res.data;
+                applyLogLines(d.log_lines, d.log_cursor);
                 if (d.running) {
                     pollRetries = 0;
                     setProgress(
@@ -625,6 +666,7 @@ jQuery(function($){
                     $backupBtn.prop('disabled', false);
                     $('#wpbn-cleanup-orphans').prop('disabled', false);
                     $progress.hide();
+                    $actLog.hide();
                 }
             }).fail(function() { pollBackupStatus(); });
         }, 3000);

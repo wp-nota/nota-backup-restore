@@ -146,6 +146,8 @@ class WPBN_Backup {
             $pending_db_logs[] = array( 'msg' => 'File list: ' . number_format( count( $file_list ) ) . ' files', 'level' => 'info', 'time' => $t );
         }
 
+        $live_logs = $pending_db_logs;
+
         $chunk_mb        = (int) WPBN_Settings::get( 'chunk_size_mb' );
         $chunk_mb        = max( 2, min( $chunk_mb, 50 ) );
         $fpc_override    = (int) WPBN_Settings::get( 'files_per_chunk_override' );
@@ -168,6 +170,7 @@ class WPBN_Backup {
             'backup_type' => $backup_type,
             'start_time'       => microtime( true ),
             'pending_db_logs'  => $pending_db_logs,
+            'live_logs'        => $live_logs,
             'last_heartbeat'   => time(),
             'current_step'     => 'zip_files',
         );
@@ -358,7 +361,9 @@ class WPBN_Backup {
 
         $done = $offset >= $total;
         if ( $done ) {
-            $state['pending_db_logs'][] = array( 'msg' => 'ZIP complete: ' . number_format( $offset ) . ' / ' . number_format( $total ) . ' files', 'level' => 'info', 'time' => time() );
+            $zip_done_entry = array( 'msg' => 'ZIP complete: ' . number_format( $offset ) . ' / ' . number_format( $total ) . ' files', 'level' => 'info', 'time' => time() );
+            $state['pending_db_logs'][] = $zip_done_entry;
+            $state['live_logs'][]       = $zip_done_entry;
             update_option( self::STATE_OPTION, $state, false );
         }
         return array(

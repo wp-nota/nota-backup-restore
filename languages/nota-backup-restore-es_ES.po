@@ -723,3 +723,8 @@ msgstr "Nuevas subidas"
 
 msgid "Dismiss"
 msgstr "Cerrar"
+
+#. translators: 1: files processed, 2: total files, 3: percentage
+#: admin/class-wpbn-admin.php
+msgid "{offset} / {total} files ({percent}%)"
+msgstr ""

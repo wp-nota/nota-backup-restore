@@ -57,8 +57,10 @@ class WPBN_Ajax {
             $backup_type = 'full';
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON string; sanitize_text_field would corrupt quotes. Each decoded element is sanitized via array_map below.
         $paths_raw       = json_decode( wp_unslash( $_POST['selected_paths']  ?? '[]' ), true );
         $selected_paths  = is_array( $paths_raw )  ? array_map( 'sanitize_text_field', $paths_raw )  : array();
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON string; sanitize_text_field would corrupt quotes. Each decoded element is sanitized via array_map below.
         $tables_raw      = json_decode( wp_unslash( $_POST['selected_tables'] ?? '[]' ), true );
         $selected_tables = is_array( $tables_raw ) ? array_map( 'sanitize_text_field', $tables_raw ) : array();
 
@@ -80,6 +82,8 @@ class WPBN_Ajax {
 
     public function run_backup_bg() {
         $this->check_permissions();
+
+        $log_cursor_in = absint( wp_unslash( $_POST['log_cursor'] ?? 0 ) );
 
         @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, extends per-request limit for background backup launch
         @ini_set( 'memory_limit', '512M' );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside AJAX handler, raises limit only for this backup step
@@ -127,19 +131,31 @@ class WPBN_Ajax {
             if ( $r['next'] === 'zip_files' ) {
                 wp_clear_scheduled_hook( 'wpbn_process_next_chunk' );
                 wp_schedule_single_event( time() + 30, 'wpbn_process_next_chunk' );
+                $state_now  = get_option( WPBN_Backup::STATE_OPTION );
+                $all_logs   = $state_now ? ( $state_now['live_logs'] ?? array() ) : array();
                 wp_send_json_success( array(
-                    'status'  => 'zipping',
-                    'offset'  => $r['offset']  ?? 0,
-                    'total'   => $r['total']   ?? 0,
-                    'percent' => $r['percent'] ?? 0,
+                    'status'     => 'zipping',
+                    'offset'     => $r['offset']  ?? 0,
+                    'total'      => $r['total']   ?? 0,
+                    'percent'    => $r['percent'] ?? 0,
+                    'log_lines'  => array_slice( $all_logs, $log_cursor_in ),
+                    'log_cursor' => count( $all_logs ),
                 ) );
             } else {
                 wp_clear_scheduled_hook( 'wpbn_process_next_chunk' );
+                $state_now  = get_option( WPBN_Backup::STATE_OPTION );
+                $all_logs   = $state_now ? ( $state_now['live_logs'] ?? array() ) : array();
+                $new_logs   = array_slice( $all_logs, $log_cursor_in );
                 $r = WPBN_Backup::step_finalize();
                 if ( ! empty( $r['success'] ) ) {
                     set_transient( 'wpbn_last_backup_result', $r, 300 );
                     error_log( 'WP Backup Nota: Backup completed successfully.' );
-                    wp_send_json_success( array( 'status' => 'done', 'result' => $r ) );
+                    wp_send_json_success( array(
+                        'status'     => 'done',
+                        'result'     => $r,
+                        'log_lines'  => $new_logs,
+                        'log_cursor' => count( $all_logs ),
+                    ) );
                 } else {
                     error_log( 'WP Backup Nota: Finalize failed — ' . ( $r['error'] ?? 'unknown' ) );
                     wpbn_cleanup_failed_state( "Finalize error: " . ( $r['error'] ?? 'unknown' ) );
@@ -162,6 +178,8 @@ class WPBN_Ajax {
     public function backup_status() {
         $this->check_permissions();
 
+        $log_cursor_in = absint( wp_unslash( $_POST['log_cursor'] ?? 0 ) );
+
         $state = get_option( WPBN_Backup::STATE_OPTION );
         if ( $state ) {
             $hb              = isset( $state['last_heartbeat'] ) ? (int) $state['last_heartbeat'] : 0;
@@ -179,15 +197,18 @@ class WPBN_Ajax {
                 return;
             }
 
-            $total   = isset( $state['file_count'] ) ? (int) $state['file_count'] : 0;
-            $offset  = (int) ( $state['offset'] ?? 0 );
-            $percent = $total > 0 ? round( $offset / $total * 100, 1 ) : 0;
+            $total    = isset( $state['file_count'] ) ? (int) $state['file_count'] : 0;
+            $offset   = (int) ( $state['offset'] ?? 0 );
+            $percent  = $total > 0 ? round( $offset / $total * 100, 1 ) : 0;
+            $all_logs = $state['live_logs'] ?? array();
             wp_send_json_success( array(
-                'running'  => true,
-                'offset'   => $offset,
-                'total'    => $total,
-                'percent'  => $percent,
-                'step'     => $state['current_step'] ?? 'zip_files',
+                'running'    => true,
+                'offset'     => $offset,
+                'total'      => $total,
+                'percent'    => $percent,
+                'step'       => $state['current_step'] ?? 'zip_files',
+                'log_lines'  => array_slice( $all_logs, $log_cursor_in ),
+                'log_cursor' => count( $all_logs ),
             ) );
         }
 

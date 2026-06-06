@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.6
+Stable tag: 2.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -108,6 +108,10 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.1.7 =
+* New: Real-time activity log panel during backup — shows DB export, file list, ZIP progress and completion in a terminal-style display
+* Fix: Plugin Check warnings for non-sanitized JSON POST inputs (selected_paths, selected_tables) — sanitization happens correctly after json_decode
 
 = 2.1.6 =
 * New: Selective backup — Database Only and Files Only modes are now free (with table/folder picker)

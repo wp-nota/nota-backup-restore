@@ -125,6 +125,7 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
       <div class="progress"><div class="progress-bar" id="wpbn-progress-inner" style="width:0%"></div></div>
       <p id="wpbn-progress-msg" class="wpbn-progress-msg"><?php esc_html_e( 'Preparing backup…', 'nota-backup-restore' ); ?></p>
      </div>
+     <div id="wpbn-activity-log" style="display:none;margin-top:8px;background:#0d1117;color:#c9d1d9;border-radius:6px;padding:8px 12px;font-family:monospace;font-size:.75rem;line-height:1.7;max-height:180px;overflow-y:auto;"></div>
     </div>
  </div>
 
