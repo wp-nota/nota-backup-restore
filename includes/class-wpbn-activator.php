@@ -12,16 +12,10 @@ class WPBN_Activator {
             wp_mkdir_p( WPBN_BACKUP_DIR );
         }
 
-        // Protect backup directory - block directory listing and PHP execution
-        // but allow ZIP downloads (handled via WordPress AJAX for auth check)
-        $htaccess = WPBN_BACKUP_DIR . '/.htaccess';
-        $htaccess_content = "Options -Indexes\n"
-            . "# Block direct PHP execution\n"
-            . "<FilesMatch \"\\.php$\">\n"
-            . "    Deny from all\n"
-            . "</FilesMatch>\n"
-            . "# Allow ZIP downloads only for logged-in admin (handled by WP)\n";
-        file_put_contents( $htaccess, $htaccess_content );
+        // Protect backup directory — deny ALL direct HTTP access.
+        // Downloads are served through admin-ajax (capability + nonce checked),
+        // so nothing in this directory ever needs to be web-accessible.
+        self::write_backup_htaccess();
 
         $index = WPBN_BACKUP_DIR . '/index.php';
         if ( ! file_exists( $index ) ) {
@@ -41,6 +35,7 @@ class WPBN_Activator {
             duration    INT UNSIGNED                 DEFAULT NULL,
             notes       TEXT                         DEFAULT NULL,
             error_msg   TEXT                         DEFAULT NULL,
+            wp_version  VARCHAR(20)                  DEFAULT NULL,
             created_at  DATETIME            NOT NULL,
             PRIMARY KEY (id)
         ) {$charset_collate};";
@@ -50,8 +45,9 @@ class WPBN_Activator {
 
         // Add missing columns for existing installations
         $cols = $wpdb->get_col( "DESCRIBE {$table}", 0 );
-        if ( ! in_array( 'duration',  $cols ) ) $wpdb->query( "ALTER TABLE {$table} ADD COLUMN duration  INT UNSIGNED DEFAULT NULL AFTER status" );
-        if ( ! in_array( 'error_msg', $cols ) ) $wpdb->query( "ALTER TABLE {$table} ADD COLUMN error_msg TEXT         DEFAULT NULL AFTER notes" );
+        if ( ! in_array( 'duration',   $cols ) ) $wpdb->query( "ALTER TABLE {$table} ADD COLUMN duration   INT UNSIGNED DEFAULT NULL AFTER status" );
+        if ( ! in_array( 'error_msg',  $cols ) ) $wpdb->query( "ALTER TABLE {$table} ADD COLUMN error_msg  TEXT         DEFAULT NULL AFTER notes" );
+        if ( ! in_array( 'wp_version', $cols ) ) $wpdb->query( "ALTER TABLE {$table} ADD COLUMN wp_version VARCHAR(20)  DEFAULT NULL AFTER error_msg" );
 
         // Create activity log table
         $logs_table = $wpdb->prefix . 'wpbn_logs';
@@ -85,6 +81,30 @@ class WPBN_Activator {
             $existing['excluded_cache_presets'] = $all_cache_presets;
             update_option( 'wpbn_settings', $existing );
         }
+    }
+
+    /**
+     * Write the backup directory .htaccess — deny ALL direct HTTP access.
+     * Backups contain wp-config.php and a full DB dump; downloads are always
+     * served via admin-ajax, so the directory needs no web access at all.
+     * IfModule blocks keep Apache 2.2 and 2.4 (without mod_access_compat) happy.
+     */
+    public static function write_backup_htaccess() {
+        if ( ! file_exists( WPBN_BACKUP_DIR ) ) {
+            wp_mkdir_p( WPBN_BACKUP_DIR );
+        }
+        $ht  = "# Nota Backup & Restore — deny direct web access to backup files\n";
+        $ht .= "Options -Indexes\n";
+        $ht .= "<FilesMatch \".*\">\n";
+        $ht .= "  <IfModule mod_authz_core.c>\n";
+        $ht .= "    Require all denied\n";
+        $ht .= "  </IfModule>\n";
+        $ht .= "  <IfModule !mod_authz_core.c>\n";
+        $ht .= "    Order deny,allow\n";
+        $ht .= "    Deny from all\n";
+        $ht .= "  </IfModule>\n";
+        $ht .= "</FilesMatch>\n";
+        @file_put_contents( WPBN_BACKUP_DIR . '/.htaccess', $ht );
     }
 
     public static function deactivate() {

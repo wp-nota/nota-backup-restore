@@ -27,6 +27,46 @@ class WPBN_Ajax {
         add_action( 'wp_ajax_wpbn_dismiss_review',       array( $this, 'dismiss_review' ) );
         add_action( 'wp_ajax_wpbn_remind_review',        array( $this, 'remind_review' ) );
         add_action( 'wp_ajax_wpbn_browse_dir',           array( $this, 'browse_dir' ) );
+        add_action( 'wp_ajax_wpbn_delete_leftovers',     array( $this, 'delete_leftovers' ) );
+        add_action( 'wp_ajax_wpbn_dismiss_leftovers',    array( $this, 'dismiss_leftovers' ) );
+    }
+
+    /**
+     * Delete forgotten installer/migration files from the site root.
+     * Only files re-matched by the scan patterns are touched — never
+     * arbitrary user input.
+     */
+    public function delete_leftovers() {
+        $this->check_permissions();
+
+        $abspath_real = rtrim( (string) realpath( ABSPATH ), '/\\' );
+        $failed       = array();
+
+        foreach ( WPBN_Admin::find_leftover_files() as $name ) {
+            if ( basename( $name ) !== $name ) continue; // defense in depth
+            $path = ABSPATH . $name;
+            $real = realpath( $path );
+            if ( ! $real || rtrim( dirname( $real ), '/\\' ) !== $abspath_real ) continue;
+            wp_delete_file( $path );
+            if ( file_exists( $path ) ) $failed[] = $name;
+        }
+
+        delete_option( 'wpbn_leftovers_dismissed' );
+
+        if ( $failed ) {
+            wp_send_json_error( array(
+                /* translators: %s: comma-separated list of filenames */
+                'message' => sprintf( __( 'Could not delete: %s — check file permissions.', 'nota-backup-restore' ), implode( ', ', $failed ) ),
+            ) );
+        }
+        wp_send_json_success();
+    }
+
+    public function dismiss_leftovers() {
+        $this->check_permissions();
+        $files = WPBN_Admin::find_leftover_files();
+        update_option( 'wpbn_leftovers_dismissed', md5( implode( '|', $files ) ), false );
+        wp_send_json_success();
     }
 
     private function check_permissions() {
@@ -657,8 +697,10 @@ class WPBN_Ajax {
         global $wpdb;
         $table = $wpdb->prefix . 'wpbn_backups';
 
+        // 'deleted' excluded too — a deleted backup is not a restore point.
+        // SELECT * keeps this working even before the wp_version column migration runs.
         $last = $wpdb->get_row(
-            "SELECT created_at FROM {$table} WHERE status NOT IN ('failed','pending','uploading') ORDER BY id DESC LIMIT 1"
+            "SELECT * FROM {$table} WHERE status NOT IN ('failed','pending','uploading','deleted') ORDER BY created_at DESC, id DESC LIMIT 1"
         );
 
         if ( ! $last ) {
@@ -672,12 +714,8 @@ class WPBN_Ajax {
         $changes = array();
 
         // WordPress core update
-        $wp_current = get_bloginfo( 'version' );
-        $wp_at_backup = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT wp_version FROM {$table} WHERE status NOT IN ('failed','pending','uploading') ORDER BY id DESC LIMIT 1"
-            )
-        );
+        $wp_current   = get_bloginfo( 'version' );
+        $wp_at_backup = $last->wp_version ?? null;
         if ( $wp_at_backup && version_compare( $wp_current, $wp_at_backup, '>' ) ) {
             $changes[] = array( 'type' => 'wp', 'detail' => $wp_at_backup . ' → ' . $wp_current );
         }

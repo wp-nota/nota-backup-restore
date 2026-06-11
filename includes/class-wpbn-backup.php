@@ -49,7 +49,9 @@ class WPBN_Backup {
 
         $timestamp     = gmdate( 'Y-m-d_H-i-s' );
         $site_slug     = sanitize_title( wp_parse_url( get_site_url(), PHP_URL_HOST ) );
-        $backup_name   = "wpbn_{$site_slug}_{$timestamp}";
+        // Random suffix makes the filename unguessable — slug+timestamp alone can
+        // be brute-forced and the ZIP contains wp-config.php + full database.
+        $backup_name   = "wpbn_{$site_slug}_{$timestamp}_" . bin2hex( random_bytes( 4 ) );
         $tmp_dir       = WPBN_BACKUP_DIR . '/tmp_' . $backup_name;
         wp_mkdir_p( $tmp_dir );
 
@@ -474,8 +476,9 @@ class WPBN_Backup {
             'status'      => 'complete',
             'duration'    => $duration,
             'notes'       => $notes,
+            'wp_version'  => get_bloginfo( 'version' ),
             'created_at'  => gmdate( 'Y-m-d H:i:s' ),
-        ), array( '%s', '%d', '%s', '%s', '%d', '%s', '%s' ) );
+        ), array( '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%s' ) );
         $backup_id = $wpdb->insert_id;
 
         // Flush accumulated logs now that backup_id is known

@@ -13,10 +13,13 @@
 define( 'WPBN_ZIP_FILE', '@@ZIP_FILE@@' ); // embedded at download time
 define( 'WPBN_ROOT',     __DIR__ );
 define( 'WPBN_ZIP_PATH', WPBN_ROOT . '/' . WPBN_ZIP_FILE );
-define( 'WPBN_LOG',      WPBN_ROOT . '/installer_log.txt' );
+// Suffix derived from the ZIP name (which carries a random component) makes the
+// state/log filenames unguessable — the state file holds DB credentials.
+define( 'WPBN_SUFFIX',   substr( hash( 'sha256', WPBN_ZIP_FILE ), 0, 12 ) );
+define( 'WPBN_LOG',      WPBN_ROOT . '/installer_log_' . WPBN_SUFFIX . '.txt' );
 define( 'WPBN_MANIFEST', WPBN_ROOT . '/wpbn-manifest.json' );
 define( 'WPBN_CONFIG',   WPBN_ROOT . '/config.json' );
-define( 'WPBN_STATE',    WPBN_ROOT . '/.wpbn_state.json' );
+define( 'WPBN_STATE',    WPBN_ROOT . '/.wpbn_state_' . WPBN_SUFFIX . '.json' );
 
 $incomplete_class_count = 0;
 
@@ -296,9 +299,13 @@ function wpbn_exec_query( $conn, $query, $safe_collation, &$current_table ) {
     return $ok;
 }
 
-// ── AJAX: extract_zip ─────────────────────────────────────────────────────────
+// ── AJAX: extract_zip (chunked) ──────────────────────────────────────────────
+// One batch per AJAX call — ~400 files or ~80 MB, whichever fills first.
+// A single extractTo() on a multi-GB site exceeds proxy/LiteSpeed time limits
+// even when PHP's own limit is raised. Batches are idempotent: if a request
+// dies mid-batch, the next call re-extracts the same range (overwrite is safe).
 function wpbn_ajax_extract_zip() {
-    @set_time_limit( 3600 );
+    @set_time_limit( 120 );
     @ini_set( 'memory_limit', '1024M' );
 
     if ( ! file_exists( WPBN_ZIP_PATH ) ) {
@@ -312,11 +319,44 @@ function wpbn_ajax_extract_zip() {
     if ( $res !== true ) {
         wpbn_json( array( 'ok' => false, 'error' => 'Could not open ZIP file (code: ' . $res . '). The file may be corrupted.' ) );
     }
-    $count = $zip->numFiles;
-    $zip->extractTo( WPBN_ROOT );
+
+    $total = $zip->numFiles;
+    $index = isset( $_POST['extract_index'] ) ? max( 0, (int) $_POST['extract_index'] ) : 0;
+
+    $max_files   = 400;
+    $max_bytes   = 80 * 1024 * 1024;
+    $batch       = array();
+    $batch_bytes = 0;
+
+    while ( $index < $total ) {
+        $name = $zip->getNameIndex( $index );
+        if ( $name !== false ) {
+            $batch[] = $name;
+            $stat    = $zip->statIndex( $index );
+            $batch_bytes += isset( $stat['size'] ) ? (int) $stat['size'] : 0;
+        }
+        $index++;
+        if ( count( $batch ) >= $max_files || $batch_bytes >= $max_bytes ) break;
+    }
+
+    if ( ! empty( $batch ) && ! $zip->extractTo( WPBN_ROOT, $batch ) ) {
+        $zip->close();
+        wpbn_log( 'Extract failed in batch ending at index ' . $index );
+        wpbn_json( array( 'ok' => false, 'error' => 'Extraction failed around file ' . $index . ' of ' . $total . '. Check disk space and directory permissions, then try again.' ) );
+    }
     $zip->close();
-    wpbn_log( 'ZIP extracted: ' . WPBN_ZIP_FILE . ' (' . $count . ' files)' );
-    wpbn_json( array( 'ok' => true, 'files' => $count ) );
+
+    $done = $index >= $total;
+    if ( $done ) {
+        wpbn_log( 'ZIP extracted: ' . WPBN_ZIP_FILE . ' (' . $total . ' files)' );
+    }
+    wpbn_json( array(
+        'ok'      => true,
+        'done'    => $done,
+        'index'   => $index,
+        'total'   => $total,
+        'percent' => $total > 0 ? min( 100, round( $index / $total * 100 ) ) : 100,
+    ) );
 }
 
 // ── AJAX: import_chunk ────────────────────────────────────────────────────────
@@ -944,9 +984,14 @@ function wpbn_ajax_cleanup() {
     @unlink( WPBN_ROOT . '/database.sql' );
     @unlink( WPBN_ROOT . '/database.sql.enc' );
     @unlink( WPBN_ROOT . '/wp-config.php.enc' );
+    // Glob patterns also catch leftovers from older/abandoned installer runs
+    foreach ( glob( WPBN_ROOT . '/.wpbn_state*.json*' ) ?: array() as $f ) @unlink( $f );
+    foreach ( glob( WPBN_ROOT . '/installer_log*.txt' ) ?: array() as $f ) @unlink( $f );
     @unlink( WPBN_LOG );
     @unlink( WPBN_STATE );
-    @unlink( WPBN_ROOT . '/.wpbn_csrf_token' );
+    @unlink( WPBN_ROOT . '/.wpbn_csrf_token' ); // legacy installers
+    @unlink( WPBN_ROOT . '/.wpbn_state.json' );  // legacy installers
+    @unlink( WPBN_ROOT . '/.wpbn_state.json.buf' );
     if ( $del_zip ) {
         @unlink( WPBN_ZIP_PATH );
     }
@@ -988,14 +1033,10 @@ function wpbn_ajax_view_log() {
 }
 
 // ── CSRF TOKEN ────────────────────────────────────────────────────────────────
+// Derived from the embedded ZIP name — no token file needed. Cross-origin pages
+// cannot read this page (same-origin policy), so the token stays unknown to them.
 function wpbn_csrf_token() {
-    $token_file = WPBN_ROOT . '/.wpbn_csrf_token';
-    if ( file_exists( $token_file ) ) {
-        return trim( file_get_contents( $token_file ) );
-    }
-    $token = bin2hex( random_bytes( 32 ) );
-    file_put_contents( $token_file, $token );
-    return $token;
+    return hash( 'sha256', WPBN_ZIP_FILE . ':csrf' );
 }
 
 function wpbn_verify_csrf() {
@@ -1176,7 +1217,7 @@ $pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]
 <div id="extract-wrap">
  <button class="btn success" id="extract-btn">&#x1F4E6; Extract Backup ZIP</button>
  <div id="extract-progress" style="display:none;margin-top:14px">
-  <div class="notice info"><span class="spinner"></span> &nbsp;Extracting, please wait&hellip; This may take a few minutes for large sites.</div>
+  <div class="notice info"><span class="spinner" style="border-color:#2271b1;border-top-color:transparent"></span> &nbsp;Extracting&hellip; <strong id="extract-pct">0%</strong> <span id="extract-count"></span> &mdash; keep this tab open.</div>
  </div>
  <div id="extract-error" style="display:none"></div>
 </div>
@@ -1297,32 +1338,44 @@ $pf_has_error = (bool) array_filter( $pf_checks, function( $c ) { return ! $c[1]
     xhr.send(parts.join('&'));
   }
 
-  // ── Extract ZIP ─────────────────────────────────────────────────────────────
+  // ── Extract ZIP (chunked loop) ──────────────────────────────────────────────
   var extractBtn = document.getElementById('extract-btn');
   if (extractBtn) {
+    var extractRetries = 0;
+
+    function extractShowError(msg) {
+      document.getElementById('extract-progress').style.display = 'none';
+      var el = document.getElementById('extract-error');
+      el.className = 'notice error';
+      el.textContent = '❌ ' + msg; // textContent — msg may echo server output
+      el.style.display = 'block';
+      extractBtn.disabled = false;
+    }
+
+    function extractChunk(idx) {
+      post({ action: 'extract_zip', extract_index: idx }, function(res) {
+        if (!res.ok) { extractShowError(res.error); return; }
+        extractRetries = 0;
+        if (res.done) { location.reload(); return; }
+        document.getElementById('extract-pct').textContent = res.percent + '%';
+        document.getElementById('extract-count').textContent = '(' + res.index + ' / ' + res.total + ' files)';
+        extractChunk(res.index);
+      }, function(err) {
+        // Transient network error — retry same batch up to 3 times (idempotent)
+        if (++extractRetries <= 3) {
+          setTimeout(function(){ extractChunk(idx); }, 3000);
+        } else {
+          extractShowError('Connection error: ' + err);
+        }
+      });
+    }
+
     extractBtn.addEventListener('click', function() {
       extractBtn.disabled = true;
       document.getElementById('extract-progress').style.display = 'block';
       document.getElementById('extract-error').style.display = 'none';
-      post({ action: 'extract_zip' }, function(res) {
-        if (res.ok) {
-          location.reload();
-        } else {
-          document.getElementById('extract-progress').style.display = 'none';
-          var el = document.getElementById('extract-error');
-          el.className = 'notice error';
-          el.innerHTML = '&#x274C; ' + res.error;
-          el.style.display = 'block';
-          extractBtn.disabled = false;
-        }
-      }, function(err) {
-        document.getElementById('extract-progress').style.display = 'none';
-        var el = document.getElementById('extract-error');
-        el.className = 'notice error';
-        el.innerHTML = '&#x274C; Connection error: ' + err;
-        el.style.display = 'block';
-        extractBtn.disabled = false;
-      });
+      extractRetries = 0;
+      extractChunk(0);
     });
   }
 

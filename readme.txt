@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -108,6 +108,18 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.1.8 =
+* Security: Backup ZIP filenames now include a random suffix — site slug + timestamp alone could be brute-forced, and the ZIP contains wp-config.php plus the full database
+* Security: Installer state and log files now use unguessable names derived from the backup archive name (DB credentials were stored in a fixed-name state file during migration)
+* Security: Backup directory .htaccess now denies ALL direct HTTP access (downloads always go through authenticated admin-ajax); existing installs upgraded automatically
+* Security: Admin warning when leftover installer/migration files (installer, SQL dump, state files, backup ZIP) are detected in the site root, with one-click safe deletion
+* Security: Installer CSRF token no longer stored in a web-accessible file
+* Improvement: Installer ZIP extraction is now chunked (~400 files / ~80 MB per request) with progress display — no more proxy timeouts on multi-GB sites
+* Fix: Site Changes bar "WordPress updated" detection never worked — the wp_version column was missing from the backups table; added with automatic migration
+* Fix: Site Changes bar counted deleted backups as the last backup — a deleted backup is not a restore point
+* Fix: Leftover-files security notice could stay hidden for hours after a migration due to caching — now scans fresh on every admin page load
+* Fix: History page "Register" button for orphan backups did nothing — its script was attached before the script handle was registered, so WordPress silently dropped it
 
 = 2.1.7 =
 * New: Real-time activity log panel during backup — shows DB export, file list, ZIP progress and completion in a terminal-style display

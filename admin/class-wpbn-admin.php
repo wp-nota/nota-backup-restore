@@ -9,6 +9,94 @@ class WPBN_Admin {
         add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_assets' ) );
         add_action( 'wp_dashboard_setup',     array( $this, 'register_dashboard_widget' ) );
         add_action( 'admin_notices',          array( $this, 'render_review_notice' ) );
+        add_action( 'admin_notices',          array( $this, 'render_leftover_notice' ) );
+    }
+
+    /**
+     * Scan the site root for forgotten installer/migration files.
+     * After a migration these may linger in the web root and expose
+     * the full database (installer, SQL dump, state with DB credentials).
+     *
+     * @return string[] basenames of files found in ABSPATH root.
+     */
+    public static function find_leftover_files(): array {
+        $patterns = array(
+            'installer_*.php',
+            'wpbn-manifest.json',
+            '.wpbn_state*.json*',
+            'installer_log*.txt',
+            'database.sql',
+            'database.sql.enc',
+            'wp-config.php.enc',
+            'wpbn_*.zip',
+            '.wpbn_csrf_token',
+        );
+        $found = array();
+        foreach ( $patterns as $p ) {
+            foreach ( glob( ABSPATH . $p ) ?: array() as $f ) {
+                if ( is_file( $f ) ) {
+                    $found[] = basename( $f );
+                }
+            }
+        }
+        $found = array_values( array_unique( $found ) );
+        sort( $found );
+        return $found;
+    }
+
+    public function render_leftover_notice() {
+        if ( ! current_user_can( 'manage_options' ) ) return;
+
+        // Fresh scan on every admin load — glob on a single directory costs
+        // ~1 ms, and caching here once hid the notice for hours right after
+        // a migration (the exact moment it matters most).
+        $files = self::find_leftover_files();
+        if ( empty( $files ) ) return;
+
+        // Dismiss applies to this exact file set — new leftovers re-trigger the notice
+        if ( get_option( 'wpbn_leftovers_dismissed' ) === md5( implode( '|', $files ) ) ) return;
+
+        $nonce = wp_create_nonce( 'wpbn_nonce' );
+        ?>
+        <div class="notice notice-error" id="wpbn-leftover-notice" style="padding:12px 16px;">
+            <p style="margin:0 0 6px;"><strong>🛡️ <?php esc_html_e( 'Nota Backup & Restore — security warning:', 'nota-backup-restore' ); ?></strong>
+            <?php esc_html_e( 'Leftover installer/migration files were found in your site root. They may expose your database and should be removed:', 'nota-backup-restore' ); ?></p>
+            <p style="margin:0 0 8px;"><code><?php echo esc_html( implode( '   ', $files ) ); ?></code></p>
+            <p style="margin:0;">
+                <button type="button" class="button button-primary" id="wpbn-leftover-delete"><?php esc_html_e( 'Delete files safely', 'nota-backup-restore' ); ?></button>
+                <button type="button" class="button" id="wpbn-leftover-dismiss"><?php esc_html_e( 'Ignore', 'nota-backup-restore' ); ?></button>
+                <span id="wpbn-leftover-msg" style="margin-left:8px;color:#d63638;"></span>
+            </p>
+        </div>
+        <script>
+        (function(){
+            var del = document.getElementById('wpbn-leftover-delete');
+            var dis = document.getElementById('wpbn-leftover-dismiss');
+            var box = document.getElementById('wpbn-leftover-notice');
+            var msg = document.getElementById('wpbn-leftover-msg');
+            function post(action, cb){
+                var fd = new FormData();
+                fd.append('action', action);
+                fd.append('nonce', '<?php echo esc_js( $nonce ); ?>');
+                fetch(ajaxurl, { method:'POST', body: fd })
+                    .then(function(r){ return r.json(); }).then(cb)
+                    .catch(function(){ msg.textContent = '<?php echo esc_js( __( 'Request failed.', 'nota-backup-restore' ) ); ?>'; });
+            }
+            if (del) del.addEventListener('click', function(){
+                if (!confirm('<?php echo esc_js( __( 'The listed files will be permanently deleted from the site root. Continue?', 'nota-backup-restore' ) ); ?>')) return;
+                del.disabled = true;
+                post('wpbn_delete_leftovers', function(res){
+                    if (res.success) { box.remove(); return; }
+                    del.disabled = false;
+                    msg.textContent = (res.data && res.data.message) ? res.data.message : '<?php echo esc_js( __( 'Request failed.', 'nota-backup-restore' ) ); ?>';
+                });
+            });
+            if (dis) dis.addEventListener('click', function(){
+                post('wpbn_dismiss_leftovers', function(){ box.remove(); });
+            });
+        })();
+        </script>
+        <?php
     }
 
     public function register_menus() {
@@ -46,7 +134,12 @@ class WPBN_Admin {
         // Bootstrap 5.3 CSS — bundled locally, scoped under .wpbn-wrap
         wp_enqueue_style( 'wpbn-bootstrap', WPBN_PLUGIN_URL . 'assets/css/bootstrap.min.css', array(), '5.3.3' );
 
-        // History page: register orphan backup handler
+        wp_enqueue_style(  'wpbn-admin', WPBN_PLUGIN_URL . 'assets/css/admin.css', array( 'wpbn-bootstrap' ), WPBN_VERSION );
+        wp_enqueue_script( 'wpbn-admin', WPBN_PLUGIN_URL . 'assets/js/admin.js',   array( 'jquery' ), WPBN_VERSION, true );
+
+        // History page: register orphan backup handler.
+        // Must run AFTER wp_enqueue_script('wpbn-admin') — wp_add_inline_script()
+        // silently fails (returns false) when the handle is not registered yet.
         if ( $hook === 'backup-nota_page_wp-backup-nota-history' || strpos( $hook, 'history' ) !== false ) {
             $history_js = '(function(){'
                 . 'document.querySelectorAll(".wpbn-register-btn").forEach(function(btn){'
@@ -70,9 +163,6 @@ class WPBN_Admin {
                 . '})();';
             wp_add_inline_script( 'wpbn-admin', $history_js );
         }
-
-        wp_enqueue_style(  'wpbn-admin', WPBN_PLUGIN_URL . 'assets/css/admin.css', array( 'wpbn-bootstrap' ), WPBN_VERSION );
-        wp_enqueue_script( 'wpbn-admin', WPBN_PLUGIN_URL . 'assets/js/admin.js',   array( 'jquery' ), WPBN_VERSION, true );
 
         global $wpdb;
         wp_localize_script( 'wpbn-admin', 'wpbn', array(

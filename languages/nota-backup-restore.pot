@@ -1049,3 +1049,32 @@ msgstr ""
 #: admin/class-wpbn-admin.php
 msgid "{offset} / {total} files ({percent}%)"
 msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "Nota Backup & Restore — security warning:"
+msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "Leftover installer/migration files were found in your site root. They may expose your database and should be removed:"
+msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "Delete files safely"
+msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "Ignore"
+msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "The listed files will be permanently deleted from the site root. Continue?"
+msgstr ""
+
+#: admin/class-wpbn-admin.php
+msgid "Request failed."
+msgstr ""
+
+#. translators: %s: comma-separated list of filenames
+#: includes/class-wpbn-ajax.php
+msgid "Could not delete: %s — check file permissions."
+msgstr ""

@@ -728,3 +728,24 @@ msgstr "Kapat"
 #: admin/class-wpbn-admin.php
 msgid "{offset} / {total} files ({percent}%)"
 msgstr "{offset} / {total} dosya ({percent}%)"
+
+msgid "Nota Backup & Restore — security warning:"
+msgstr "Nota Backup & Restore — güvenlik uyarısı:"
+
+msgid "Leftover installer/migration files were found in your site root. They may expose your database and should be removed:"
+msgstr "Site kök dizininde unutulmuş kurulum/taşıma dosyaları bulundu. Bunlar veritabanınızı ifşa edebilir ve kaldırılmalıdır:"
+
+msgid "Delete files safely"
+msgstr "Dosyaları güvenle sil"
+
+msgid "Ignore"
+msgstr "Yoksay"
+
+msgid "The listed files will be permanently deleted from the site root. Continue?"
+msgstr "Listelenen dosyalar site kök dizininden kalıcı olarak silinecek. Devam edilsin mi?"
+
+msgid "Request failed."
+msgstr "İstek başarısız oldu."
+
+msgid "Could not delete: %s — check file permissions."
+msgstr "Silinemedi: %s — dosya izinlerini kontrol edin."
