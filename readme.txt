@@ -36,6 +36,7 @@ The following features require the [Pro version](https://www.wp-nota.com/pricing
 * **Admin panel restore** — one-click restore directly in WordPress
 * **Emergency Recovery** — standalone restore page that works even when WordPress is broken
 * **Email notifications** — success and failure alerts
+* **Staging environment** — create a staging site, test changes, push to live
 
 = How It Works =
 
