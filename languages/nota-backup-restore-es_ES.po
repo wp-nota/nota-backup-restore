@@ -649,9 +649,6 @@ msgstr "copias de seguridad"
 msgid "Backup Logs"
 msgstr "Registros de copias de seguridad"
 
-msgid "Backup"
-msgstr "Copia de seguridad"
-
 msgid "Log entries"
 msgstr "Entradas de registro"
 
@@ -687,12 +684,6 @@ msgstr "Registros"
 
 msgid "Saved."
 msgstr "Guardado."
-
-msgid "Failed"
-msgstr "Fallido"
-
-msgid "Complete"
-msgstr "Completado"
 
 msgid "Time"
 msgstr "Hora"
@@ -749,3 +740,9 @@ msgstr ""
 
 msgid "Could not delete: %s — check file permissions."
 msgstr ""
+
+msgid "Happy with the backup? A quick review on WordPress.org means a lot — thank you!"
+msgstr "¿Satisfecho con la copia de seguridad? Una breve reseña en WordPress.org significa mucho para nosotros — ¡gracias!"
+
+msgid "You've been using <strong>Nota Backup & Restore</strong> for 2 weeks — if it's been reliable for you, a quick review on WordPress.org would mean a lot. Thank you!"
+msgstr "Lleva 2 semanas usando Nota Backup & Restore — si le ha resultado fiable, una breve reseña en WordPress.org significaría mucho para nosotros. ¡Gracias!"

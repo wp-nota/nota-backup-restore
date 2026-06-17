@@ -316,7 +316,7 @@ msgid "New uploads"
 msgstr ""
 
 #: admin/class-wpbn-admin.php:146
-msgid "Enjoying the plugin? Leave a quick ★★★★★ review — it really helps!"
+msgid "Happy with the backup? A quick review on WordPress.org means a lot — thank you!"
 msgstr ""
 
 #: admin/class-wpbn-admin.php:147
@@ -324,7 +324,7 @@ msgid "Leave a Review"
 msgstr ""
 
 #: admin/class-wpbn-admin.php:168
-msgid "<strong>Nota Backup & Restore</strong> — enjoying it? Please take a moment to leave a review on wp.org. It really helps!"
+msgid "You've been using <strong>Nota Backup & Restore</strong> for 2 weeks — if it's been reliable for you, a quick review on WordPress.org would mean a lot. Thank you!"
 msgstr ""
 
 #: admin/class-wpbn-admin.php:171

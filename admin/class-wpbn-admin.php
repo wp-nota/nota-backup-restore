@@ -235,7 +235,7 @@ class WPBN_Admin {
                 'sc_plugins'         => __( 'Plugins changed', 'nota-backup-restore' ),
                 'sc_themes'          => __( 'Themes changed', 'nota-backup-restore' ),
                 'sc_uploads'         => __( 'New uploads', 'nota-backup-restore' ),
-                'review_prompt'      => __( 'Enjoying the plugin? Leave a quick ★★★★★ review — it really helps!', 'nota-backup-restore' ),
+                'review_prompt'      => __( 'Happy with the backup? A quick review on WordPress.org means a lot — thank you!', 'nota-backup-restore' ),
                 'review_btn'         => __( 'Leave a Review', 'nota-backup-restore' ),
                 'no_subdirs'         => __( '📂 No subdirectories in this folder.', 'nota-backup-restore' ),
                 'picker_hint_empty'  => __( 'No items selected — all files will be backed up and exclusion rules apply.', 'nota-backup-restore' ),
@@ -264,7 +264,7 @@ class WPBN_Admin {
         <div class="notice notice-info wpbn-review-notice" style="display:flex;align-items:center;gap:12px;padding:10px 16px;">
             <span style="font-size:1.3rem;line-height:1;">⭐</span>
             <p style="margin:0;flex:1;">
-                <?php echo wp_kses_post( __( '<strong>Nota Backup & Restore</strong> — enjoying it? Please take a moment to leave a review on wp.org. It really helps!', 'nota-backup-restore' ) ); ?>
+                <?php echo wp_kses_post( __( 'You\'ve been using <strong>Nota Backup & Restore</strong> for 2 weeks — if it\'s been reliable for you, a quick review on WordPress.org would mean a lot. Thank you!', 'nota-backup-restore' ) ); ?>
             </p>
             <a href="<?php echo esc_url( $review_url ); ?>" class="button button-primary" target="_blank" rel="noopener" data-wpbn-review="review">
                 <?php esc_html_e( '★ Leave a Review', 'nota-backup-restore' ); ?>

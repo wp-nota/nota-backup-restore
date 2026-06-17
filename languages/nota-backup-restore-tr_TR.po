@@ -649,9 +649,6 @@ msgstr "yedek"
 msgid "Backup Logs"
 msgstr "Yedek Günlükleri"
 
-msgid "Backup"
-msgstr "Yedek"
-
 msgid "Log entries"
 msgstr "Günlük kayıtları"
 
@@ -687,12 +684,6 @@ msgstr "Günlükler"
 
 msgid "Saved."
 msgstr "Kaydedildi."
-
-msgid "Failed"
-msgstr "Başarısız"
-
-msgid "Complete"
-msgstr "Tamamlandı"
 
 msgid "Time"
 msgstr "Zaman"
@@ -749,3 +740,9 @@ msgstr "İstek başarısız oldu."
 
 msgid "Could not delete: %s — check file permissions."
 msgstr "Silinemedi: %s — dosya izinlerini kontrol edin."
+
+msgid "Happy with the backup? A quick review on WordPress.org means a lot — thank you!"
+msgstr "Yedeklemeden memnun musunuz? WordPress.org'da kısa bir yorum bizim için çok şey ifade eder — teşekkürler!"
+
+msgid "You've been using <strong>Nota Backup & Restore</strong> for 2 weeks — if it's been reliable for you, a quick review on WordPress.org would mean a lot. Thank you!"
+msgstr "Nota Backup & Restore'u 2 haftadır kullanıyorsunuz — güvenilir buldуysanız, WordPress.org'da kısa bir yorum bizim için çok şey ifade eder. Teşekkürler!"
