@@ -129,6 +129,7 @@ jQuery(function($){
             var d = res.data;
             $('#wpbn-size-est-val').text(d.estimated_zip_hr).css('color','#2271b1');
             $('#wpbn-size-est-detail').text('(Raw: ' + d.raw_total_hr + ' | DB: ' + d.db_size_hr + ' | Files: ' + d.file_size_hr + ')');
+
         }).fail(function(){
             $('#wpbn-size-est-val').text(wpbn.i18n.could_not_calc);
         });
@@ -997,5 +998,119 @@ jQuery(function($){
             $btn.prop('disabled', false).text('Save');
         });
     });
+
+    /* ── History: Calendar View ──────────────────────────────────── */
+    var renderCalendar = null;
+    (function() {
+        if (!$('#wpbn-calendar-view').length) return;
+
+        var calYear, calMonth;
+        var calData = (typeof wpbnCalData !== 'undefined') ? wpbnCalData : {};
+        var months  = wpbn.i18n.cal_months || [];
+        var days    = wpbn.i18n.cal_days   || [];
+
+        function padZ(n) { return n < 10 ? '0' + n : '' + n; }
+
+        renderCalendar = function(year, month) {
+            calYear  = year;
+            calMonth = month;
+            $('#wpbn-cal-title').text((months[month] || '') + ' ' + year);
+
+            var firstDay    = new Date(year, month, 1).getDay();
+            firstDay = (firstDay + 6) % 7; // Mon=0 … Sun=6
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+            var today       = new Date();
+            var todayStr    = today.getFullYear() + '-' + padZ(today.getMonth()+1) + '-' + padZ(today.getDate());
+
+            var html = '';
+            for (var d = 0; d < 7; d++) {
+                html += '<div class="wpbn-cal-dayname">' + escHtml(days[d] || '') + '</div>';
+            }
+            for (var e = 0; e < firstDay; e++) {
+                html += '<div class="wpbn-cal-cell wpbn-cal-empty"></div>';
+            }
+            for (var day = 1; day <= daysInMonth; day++) {
+                var dateStr = year + '-' + padZ(month+1) + '-' + padZ(day);
+                var entries = calData[dateStr] || [];
+                var hasOk      = entries.some(function(x){ return x.status === 'complete'; });
+                var hasFail    = entries.some(function(x){ return x.status === 'failed'; });
+                var hasDeleted = entries.some(function(x){ return x.status === 'deleted'; });
+                var isToday    = dateStr === todayStr;
+
+                var cls = 'wpbn-cal-cell';
+                if (isToday)        cls += ' wpbn-cal-today';
+                if (entries.length) cls += ' wpbn-cal-has-backup';
+
+                var dots = '';
+                if (hasOk)      dots += '<span class="wpbn-cal-dot wpbn-cal-dot-ok"></span>';
+                if (hasFail)    dots += '<span class="wpbn-cal-dot wpbn-cal-dot-fail"></span>';
+                if (hasDeleted) dots += '<span class="wpbn-cal-dot wpbn-cal-dot-deleted"></span>';
+
+                html += '<div class="' + cls + '" data-date="' + dateStr + '">' +
+                    '<span class="wpbn-cal-num">' + day + '</span>' +
+                    (dots ? '<div class="wpbn-cal-dots">' + dots + '</div>' : '') +
+                    '</div>';
+            }
+            $('#wpbn-cal-grid').html(html);
+            $('#wpbn-cal-detail').hide();
+        }
+
+        $(document).on('click', '.wpbn-cal-cell.wpbn-cal-has-backup', function() {
+            var date    = $(this).data('date');
+            var entries = calData[date] || [];
+            $('.wpbn-cal-cell').removeClass('wpbn-cal-selected');
+            $(this).addClass('wpbn-cal-selected');
+
+            var html = '<strong>' + escHtml(date) + '</strong> &mdash; ' + entries.length + ' ' + escHtml(wpbn.i18n.cal_backups || '') + '<ul class="wpbn-cal-detail-list">';
+            entries.forEach(function(x) {
+                var badgeCls = x.status === 'complete' ? 'wpbn-badge-success'
+                             : x.status === 'deleted'  ? 'bg-secondary'
+                             : 'wpbn-badge-failed';
+                html += '<li><span class="badge ' + badgeCls + '">' + escHtml(x.status) + '</span> ' + escHtml(x.filename) + '</li>';
+            });
+            html += '</ul>';
+            $('#wpbn-cal-detail').html(html).show();
+        });
+
+        $('#wpbn-cal-prev').on('click', function() {
+            calMonth--;
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            renderCalendar(calYear, calMonth);
+        });
+        $('#wpbn-cal-next').on('click', function() {
+            calMonth++;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            renderCalendar(calYear, calMonth);
+        });
+
+        try {
+            if (localStorage.getItem('wpbn_history_view') === 'calendar') {
+                switchView('calendar');
+            }
+        } catch(e) {}
+    })();
+
+    /* ── History view toggle (always registered) ─────────── */
+    $(document).on('click', '[data-wpbn-view]', function() {
+        switchView($(this).data('wpbn-view'));
+    });
+
+    function switchView(view) {
+        $('[data-wpbn-view]').removeClass('btn-primary').addClass('btn-outline-primary');
+        $('[data-wpbn-view="' + view + '"]').removeClass('btn-outline-primary').addClass('btn-primary');
+        if (view === 'calendar') {
+            $('#wpbn-list-view').hide();
+            $('#wpbn-calendar-view').show();
+            var $grid = $('#wpbn-cal-grid');
+            if (!$grid.children().length && renderCalendar) {
+                var now = new Date();
+                renderCalendar(now.getFullYear(), now.getMonth());
+            }
+        } else {
+            $('#wpbn-calendar-view').hide();
+            $('#wpbn-list-view').show();
+        }
+        try { localStorage.setItem('wpbn_history_view', view); } catch(e) {}
+    }
 
 });

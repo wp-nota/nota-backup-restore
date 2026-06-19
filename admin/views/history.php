@@ -125,7 +125,53 @@ $total_size = array_sum( array_map( function($r){
  </div>
  <?php endif; ?>
 
+ <!-- Calendar data -->
+ <?php
+ $calendar_data = array();
+ foreach ( $all_rows as $r ) {
+     $local_date = get_date_from_gmt( $r->created_at, 'Y-m-d' );
+     if ( ! isset( $calendar_data[ $local_date ] ) ) {
+         $calendar_data[ $local_date ] = array();
+     }
+     $calendar_data[ $local_date ][] = array(
+         'id'       => $r->id,
+         'filename' => $r->filename,
+         'status'   => $r->status,
+         'filesize' => (int) $r->filesize,
+     );
+ }
+ ?>
+ <script>var wpbnCalData=<?php echo wp_json_encode( $calendar_data ); ?>;</script>
+
+ <!-- View Toggle -->
+ <div class="wpbn-view-toggle mb-3">
+  <div class="btn-group" role="group">
+   <button type="button" class="btn btn-sm btn-primary wpbn-view-btn" data-wpbn-view="list">
+    <span class="dashicons dashicons-list-view wpbn-vbtn-icon"></span><?php esc_html_e( 'List', 'nota-backup-restore' ); ?>
+   </button>
+   <button type="button" class="btn btn-sm btn-outline-primary wpbn-view-btn" data-wpbn-view="calendar">
+    <span class="dashicons dashicons-calendar-alt wpbn-vbtn-icon"></span><?php esc_html_e( 'Calendar', 'nota-backup-restore' ); ?>
+   </button>
+  </div>
+ </div>
+
+ <!-- Calendar View -->
+ <div id="wpbn-calendar-view" style="display:none;">
+  <div class="wpbn-calendar card">
+   <div class="card-body">
+    <div class="wpbn-cal-header">
+     <button type="button" id="wpbn-cal-prev">&#x2039;</button>
+     <span id="wpbn-cal-title"></span>
+     <button type="button" id="wpbn-cal-next">&#x203A;</button>
+    </div>
+    <div class="wpbn-cal-grid" id="wpbn-cal-grid"></div>
+    <div id="wpbn-cal-detail" style="display:none;" class="wpbn-cal-detail"></div>
+   </div>
+  </div>
+ </div>
+
  <!-- Backup List Table -->
+ <div id="wpbn-list-view">
  <div class="card">
   <div class="card-header">
    <span class="dashicons dashicons-list-view me-1" style="vertical-align:text-bottom;"></span>
@@ -226,5 +272,6 @@ $total_size = array_sum( array_map( function($r){
   </div>
  </div>
 
+ </div><!-- /#wpbn-list-view -->
  <?php endif; ?>
 </div>

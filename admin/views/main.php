@@ -30,7 +30,7 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
     </div>
     <div class="card-body">
 
-     <div id="wpbn-site-changes-bar" style="display:none;margin-bottom:12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:9px 14px;font-size:.85rem;color:#0c4a6e;display:flex;align-items:flex-start;gap:10px;">
+     <div id="wpbn-site-changes-bar" style="display:none;margin-bottom:12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:9px 14px;font-size:.85rem;color:#0c4a6e;align-items:flex-start;gap:10px;">
       <span style="font-size:1rem;flex-shrink:0;">📊</span>
       <div id="wpbn-site-changes-content" style="flex:1;"></div>
       <button type="button" id="wpbn-site-changes-dismiss" style="background:none;border:none;cursor:pointer;color:#0c4a6e;font-size:.9rem;line-height:1;padding:0;flex-shrink:0;" title="<?php esc_attr_e( 'Dismiss', 'nota-backup-restore' ); ?>">✕</button>

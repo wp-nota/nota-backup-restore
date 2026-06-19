@@ -641,3 +641,31 @@
     .wpbn-btype-cards { flex-direction: column; }
 }
 .form-check-input:checked { background-color: #2271b1 !important; border-color: #2271b1 !important; }
+
+/* ── Calendar View ──────────────────────────────────────────── */
+.wpbn-view-toggle { display:flex; align-items:center; }
+.wpbn-view-btn { display:inline-flex !important; align-items:center !important; gap:5px !important; box-shadow:none !important; text-shadow:none !important; }
+.wpbn-vbtn-icon { font-size:14px !important; width:14px !important; height:14px !important; line-height:1 !important; }
+.wpbn-calendar .card-body { padding:20px; }
+.wpbn-cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.wpbn-cal-header button { background:#fff; border:1px solid #e2e8f0; border-radius:4px; width:32px; height:32px; cursor:pointer; font-size:1.2rem; line-height:1; color:#374151; }
+.wpbn-cal-header button:hover { background:#f0f6fc; }
+.wpbn-cal-header span { font-weight:600; font-size:1rem; color:#1e293b; }
+.wpbn-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.wpbn-cal-dayname { text-align:center; font-size:.72rem; font-weight:600; color:#64748b; padding:4px 0 8px; }
+.wpbn-cal-cell { min-height:52px; border-radius:6px; padding:6px 4px; display:flex; flex-direction:column; align-items:center; cursor:default; }
+.wpbn-cal-cell.wpbn-cal-has-backup { cursor:pointer; background:#f8fafc; }
+.wpbn-cal-cell.wpbn-cal-has-backup:hover { background:#f0f6fc; }
+.wpbn-cal-cell.wpbn-cal-today .wpbn-cal-num { background:#2271b1; color:#fff; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; }
+.wpbn-cal-cell.wpbn-cal-selected { background:#e8f4fd; outline:2px solid #2271b1; }
+.wpbn-cal-num { font-size:.85rem; color:#374151; line-height:24px; margin-bottom:3px; }
+.wpbn-cal-empty { pointer-events:none; }
+.wpbn-cal-dots { display:flex; gap:3px; justify-content:center; }
+.wpbn-cal-dot { width:14px; height:14px; border-radius:50%; display:inline-block; }
+.wpbn-cal-dot-ok { background:#00a32a; }
+.wpbn-cal-dot-fail { background:#d63638; }
+.wpbn-cal-dot-deleted { background:#8c8f94; }
+.wpbn-cal-detail { margin-top:16px; padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:.875rem; }
+.wpbn-cal-detail-list { margin:8px 0 0; padding-left:18px; }
+.wpbn-cal-detail-list li { margin-bottom:5px; }
+@media (max-width:480px) { .wpbn-cal-cell { min-height:38px; padding:3px 2px; } .wpbn-cal-num { font-size:.75rem; } }

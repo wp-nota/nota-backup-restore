@@ -466,6 +466,7 @@ class WPBN_Backup {
         $duration = isset( $state['start_time'] ) ? (int) ( microtime(true) - $state['start_time'] ) : null;
         $dur_hr   = $duration !== null ? ( $duration < 60 ? "{$duration}s" : floor($duration/60) . 'm ' . ($duration%60) . 's' ) : '—';
 
+
         global $wpdb;
         $table = $wpdb->prefix . 'wpbn_backups';
         $notes = $state['notes'] ?? '';

@@ -235,6 +235,12 @@ class WPBN_Admin {
                 'sc_plugins'         => __( 'Plugins changed', 'nota-backup-restore' ),
                 'sc_themes'          => __( 'Themes changed', 'nota-backup-restore' ),
                 'sc_uploads'         => __( 'New uploads', 'nota-backup-restore' ),
+                'cal_list'           => __( 'List', 'nota-backup-restore' ),
+                'cal_calendar'       => __( 'Calendar', 'nota-backup-restore' ),
+                'cal_backups'        => __( 'backup(s)', 'nota-backup-restore' ),
+                'cal_no_backups'     => __( 'No backups on this day.', 'nota-backup-restore' ),
+                'cal_months'         => array_map( function( $m ) { return date_i18n( 'F', mktime( 0, 0, 0, $m, 1 ) ); }, range( 1, 12 ) ),
+                'cal_days'           => array_map( function( $d ) { return date_i18n( 'D', mktime( 0, 0, 0, 1, $d, 2024 ) ); }, range( 1, 7 ) ), // 2024-01-01 = Mon
                 'review_prompt'      => __( 'Happy with the backup? A quick review on WordPress.org means a lot — thank you!', 'nota-backup-restore' ),
                 'review_btn'         => __( 'Leave a Review', 'nota-backup-restore' ),
                 'no_subdirs'         => __( '📂 No subdirectories in this folder.', 'nota-backup-restore' ),

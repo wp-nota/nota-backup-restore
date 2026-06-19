@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.9
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.2.0 =
+* Added calendar view to backup history page
+* Fixed history view toggle buttons
 
 = 2.1.9 =
 * Improved admin notice and post-backup review prompt messages for clarity
