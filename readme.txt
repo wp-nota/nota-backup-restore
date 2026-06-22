@@ -1,14 +1,14 @@
 === Nota Backup & Restore ===
 Contributors: wpnota
-Tags: backup, restore, migration, database, clone
+Tags: backup, restore, migration, database, sqlite
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Complete WordPress backup plugin. Back up your entire site — files + database — with one click. Works on any shared hosting.
+Complete WordPress backup plugin. Back up your entire site — files + database — with one click. Supports ZIP and SQLite archive formats. Works on any shared hosting.
 
 == Description ==
 
@@ -26,11 +26,13 @@ Complete WordPress backup plugin. Back up your entire site — files + database 
 * **Estimated backup size** before you start
 * **Dashboard widget** showing last backup status
 * **Standalone installer** — migrate to a new domain without WordPress
+* **Server compatibility panel** — shows PHP version, ZipArchive, PDO SQLite availability and more
 
 = Premium Features (Pro Version) =
 
 The following features require the [Pro version](https://www.wp-nota.com/pricing/):
 
+* **SQLite archive format** — faster compression, smaller files, incremental updates (only changed files rewritten)
 * **Cloud Storage** — Google Drive, Amazon S3, Wasabi, Dropbox, Microsoft OneDrive, FTP/SFTP
 * **Automatic scheduled backups** — daily, weekly, monthly
 * **Admin panel restore** — one-click restore directly in WordPress
@@ -88,6 +90,9 @@ Download the backup ZIP and the Installer PHP file from the backup list. Upload 
 = How do I backup WordPress for free? =
 Install Nota Backup & Restore, go to Nota Backup in the WordPress admin sidebar, and click Start Backup. No account or configuration required. Full site backups (files + database) are completely free.
 
+= Does this plugin support SQLite backups? =
+The plugin detects whether your server has PDO_SQLite available and shows the result in the Site Information panel on the backup page. SQLite backup format — which produces faster, smaller archives and supports incremental updates (only changed files are rewritten) — is available in the [Pro version](https://www.wp-nota.com/pricing/). The free version uses standard ZIP format.
+
 = Does the free version connect to any external services? =
 No. The free version makes no external API calls. The only external link is the "Upgrade to Pro" button, which opens `https://www.wp-nota.com/pricing/` in a new tab.
 
@@ -109,6 +114,11 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.2.1 =
+* New: Archive format indicator on backup page — shows active format (ZIP) with a note that SQLite format is available in Pro
+* New: PDO_SQLite detection in Site Information panel — shows whether your server supports the SQLite archive format
+* New: Archive Format section in Settings — displays ZIP as active and SQLite as a Pro-locked option
 
 = 2.2.0 =
 * Added calendar view to backup history page

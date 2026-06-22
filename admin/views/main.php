@@ -120,6 +120,13 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
      <button class="btn btn-primary btn-hero" id="wpbn-start-backup">
       <span class="dashicons dashicons-backup" style="font-size:1.1rem;line-height:1.4;"></span> <?php esc_html_e( 'Start Backup', 'nota-backup-restore' ); ?>
      </button>
+     <span class="form-text d-inline-block ms-2" style="vertical-align:middle;">
+      📦 <?php esc_html_e( 'Archive format:', 'nota-backup-restore' ); ?> <?php esc_html_e( 'ZIP', 'nota-backup-restore' ); ?>
+      <span style="display:block;font-size:.78rem;color:#64748b;margin-top:2px;"><?php
+       /* translators: %s: upgrade URL */
+       printf( wp_kses( __( 'SQLite format (faster, smaller files, supports incremental updates) is available in <a href="%s" target="_blank" rel="noopener">Pro</a>.', 'nota-backup-restore' ), array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) ) ), esc_url( $wpbn_upgrade_url ) );
+      ?></span>
+     </span>
 
      <div id="wpbn-progress" style="display:none;margin-top:20px;">
       <div class="progress"><div class="progress-bar" id="wpbn-progress-inner" style="width:0%"></div></div>
@@ -224,6 +231,14 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
         echo extension_loaded( 'zip' )
             ? '<span class="text-success">&#x2705; ' . esc_html__( 'ZipArchive (PHP)', 'nota-backup-restore' ) . '</span>'
             : '<span class="text-warning">&#x26A0;&#xFE0F; ' . esc_html__( 'ZipArchive not available', 'nota-backup-restore' ) . '</span>';
+    ?></td></tr>
+    <tr><td><?php esc_html_e( 'PDO_SQLite', 'nota-backup-restore' ); ?></td><td><?php
+        if ( extension_loaded( 'pdo_sqlite' ) ) {
+            echo '<span class="text-success">&#x2705; ' . esc_html__( 'Available', 'nota-backup-restore' ) . '</span>';
+        } else {
+            echo '<span class="text-muted">&#x274C; ' . esc_html__( 'Not available', 'nota-backup-restore' ) . '</span>';
+        }
+        echo ' ' . $wpbn_pro_badge;
     ?></td></tr>
     <tr><td><?php esc_html_e( 'Exclusions', 'nota-backup-restore' ); ?></td><td><?php if ( ! empty( $exclude_paths ) ): ?>
      <details style="cursor:pointer;">

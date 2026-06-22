@@ -178,6 +178,21 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
         <?php endif; ?>
        </div>
       </div>
+      <div class="col-12">
+       <label class="form-label"><?php esc_html_e( 'Archive Format', 'nota-backup-restore' ); ?></label>
+       <div class="form-check">
+        <input class="form-check-input" type="radio" id="archive_format_zip" name="archive_format_display" value="zip" checked disabled>
+        <label class="form-check-label" for="archive_format_zip"><?php esc_html_e( 'ZIP (Standard)', 'nota-backup-restore' ); ?></label>
+       </div>
+       <div class="form-check">
+        <input class="form-check-input" type="radio" id="archive_format_sqlite" name="archive_format_display" value="sqlite" disabled>
+        <label class="form-check-label" for="archive_format_sqlite" style="color:#94a3b8;"><?php esc_html_e( 'SQLite', 'nota-backup-restore' ); echo $wpbn_pro_badge; ?></label>
+       </div>
+       <div class="form-text"><?php
+        /* translators: %s: upgrade URL */
+        printf( wp_kses( __( 'SQLite format is faster, creates smaller files, and supports incremental updates. Available in <a href="%s" target="_blank" rel="noopener">Pro</a>.', 'nota-backup-restore' ), array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) ) ), esc_url( $wpbn_upgrade_url ) );
+       ?></div>
+      </div>
      </div>
     </div>
    </div>
