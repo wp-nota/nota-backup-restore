@@ -14,6 +14,8 @@ WordPress backup plugin. One-click full site backup — files + database. ZIP (f
 
 **Nota Backup & Restore** creates complete WordPress backups (all files + database) in a single ZIP file. Designed for reliability on shared hosting — chunked processing ensures backups never fail due to PHP timeouts or memory limits.
 
+Nota Backup & Restore works as a complete site duplicator — clone your WordPress site to a staging environment, migrate to a new host, or restore from any backup with one click.
+
 = Free Features =
 
 * **One-click full backup** — all WordPress files + database in a single ZIP
