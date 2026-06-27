@@ -4,11 +4,11 @@ Tags: backup, restore, migration, database, sqlite
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Complete WordPress backup plugin. Back up your entire site — files + database — with one click. Supports ZIP and SQLite archive formats. Works on any shared hosting.
+WordPress backup plugin. One-click full site backup — files + database. ZIP (free) & SQLite (Pro) archive formats. Chunked processing, never times out
 
 == Description ==
 
@@ -114,6 +114,9 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.2.2 =
+* Improvement: Minor UI and code quality improvements
 
 = 2.2.1 =
 * New: Archive format indicator on backup page — shows active format (ZIP) with a note that SQLite format is available in Pro

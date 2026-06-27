@@ -186,7 +186,7 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
        </div>
        <div class="form-check">
         <input class="form-check-input" type="radio" id="archive_format_sqlite" name="archive_format_display" value="sqlite" disabled>
-        <label class="form-check-label" for="archive_format_sqlite" style="color:#94a3b8;"><?php esc_html_e( 'SQLite', 'nota-backup-restore' ); echo $wpbn_pro_badge; ?></label>
+        <label class="form-check-label" for="archive_format_sqlite" style="color:#94a3b8;"><?php esc_html_e( 'SQLite', 'nota-backup-restore' ); echo wp_kses_post( $wpbn_pro_badge ); ?></label>
        </div>
        <div class="form-text"><?php
         /* translators: %s: upgrade URL */

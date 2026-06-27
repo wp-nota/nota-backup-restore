@@ -2,6 +2,7 @@
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-local variables included from a class method, not true globals
 if ( ! defined( 'ABSPATH' ) ) exit;
 $wpbn_upgrade_url = wpbn_upgrade_url();
+$wpbn_pro_badge   = ' <span class="wpbn-pro-badge" style="font-size:.65rem;vertical-align:middle;">PRO</span>';
 ?>
 <div class="wrap wpbn-wrap">
 
@@ -238,7 +239,7 @@ $wpbn_upgrade_url = wpbn_upgrade_url();
         } else {
             echo '<span class="text-muted">&#x274C; ' . esc_html__( 'Not available', 'nota-backup-restore' ) . '</span>';
         }
-        echo ' ' . $wpbn_pro_badge;
+        echo ' ' . wp_kses_post( $wpbn_pro_badge );
     ?></td></tr>
     <tr><td><?php esc_html_e( 'Exclusions', 'nota-backup-restore' ); ?></td><td><?php if ( ! empty( $exclude_paths ) ): ?>
      <details style="cursor:pointer;">
