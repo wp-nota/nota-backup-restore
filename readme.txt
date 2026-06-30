@@ -4,7 +4,7 @@ Tags: backup, restore, migration, database, sqlite
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.2
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ Nota Backup & Restore works as a complete site duplicator — clone your WordPre
 * **Estimated backup size** before you start
 * **Dashboard widget** showing last backup status
 * **Standalone installer** — migrate to a new domain without WordPress
+* **WP-CLI commands** — create, list, verify and manage backups from the terminal (`wp nota`)
 * **Server compatibility panel** — shows PHP version, ZipArchive, PDO SQLite availability and more
 
 = Premium Features (Pro Version) =
@@ -58,6 +59,36 @@ The installer is a standalone migration tool that runs without WordPress. It is 
 3. Open `https://newdomain.com/installer_{backup_name}.php`
 4. The installer extracts the ZIP, then prompts for new database credentials and new site URL
 5. Follow the step-by-step wizard — URLs and paths are replaced throughout the database
+
+= WP-CLI Commands =
+
+Nota Backup & Restore is fully WP-CLI ready. Manage backups straight from the terminal — ideal for servers, automation and CI/CD pipelines. All commands return proper exit codes, so failures stop your scripts.
+
+`wp nota backup` — Create a backup.
+* `--type=<full|db|files>` — what to back up (default: full)
+* `--tables=<a,b,c>` — limit the database export to specific tables
+* `--exclude=<path1,path2>` — exclude files/folders (relative paths resolve against the WordPress root)
+* `--encrypt` — encrypt with the saved AES-256 password
+* `--notes=<text>` — store a note with the backup
+* `--porcelain` — output only the resulting filename (for scripts)
+
+`wp nota list` — List backups (`--format=table|json|csv|ids`).
+`wp nota info <id>` — Show details for one backup.
+`wp nota verify <id>` — Check that a backup archive exists and is readable.
+`wp nota download <id> [--output=<path>]` — Copy a backup file to a chosen location.
+`wp nota installer <id> [--output=<path>]` — Generate the standalone migration installer for a backup.
+`wp nota delete <id> | --all | --keep=<n> [--yes]` — Delete backups.
+`wp nota status` — Show the current backup engine status.
+`wp nota cleanup` — Clear a stuck/interrupted backup state.
+
+Examples:
+
+`wp nota backup --type=full --notes="nightly"`
+`wp nota backup --type=db --tables=wp_posts,wp_postmeta`
+`wp nota backup --exclude=wp-content/uploads/videos,wp-content/cache --encrypt`
+`wp nota list --format=json`
+
+In-dashboard restore is a Pro feature; on the free version, use `wp nota installer <id>` to migrate via the standalone installer.
 
 == Installation ==
 
@@ -116,6 +147,12 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.3.0 =
+* New: WP-CLI support — manage backups from the terminal with `wp nota` (backup, list, info, verify, download, installer, delete, status, cleanup)
+* New: `wp nota backup` supports `--type`, `--tables`, `--exclude`, `--encrypt`, `--notes` and `--porcelain` for scripting and CI/CD
+* New: `wp nota cleanup` clears a stuck or interrupted backup state from the command line
+* Improvement: Standalone installer generation refactored into a shared helper used by both the admin panel and WP-CLI
 
 = 2.2.2 =
 * Improvement: Minor UI and code quality improvements

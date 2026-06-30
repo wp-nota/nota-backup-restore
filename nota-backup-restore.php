@@ -3,7 +3,7 @@
  * Plugin Name: Nota Backup & Restore
  * Plugin URI:  https://www.wp-nota.com
  * Description: Full site backup plugin. Backup files + database with one click. Cloud storage and restore features available in the premium version.
- * Version:     2.2.2
+ * Version:     2.3.0
  * Author:      wp-nota.com
  * Author URI:  https://wp-nota.com
  * License:     GPL-2.0+
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.SchemaChange -- $table is always $wpdb->prefix.'wpbn_backups', never user input; schema migrations cannot use prepare()
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup operation diagnostics
-if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.2.2' );
+if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.3.0' );
 if ( ! defined( 'WPBN_PLUGIN_DIR' ) )  define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'WPBN_PLUGIN_URL' ) )  define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'WPBN_PLUGIN_FILE' ) ) define( 'WPBN_PLUGIN_FILE', __FILE__ );
@@ -42,6 +42,22 @@ require_once WPBN_PLUGIN_DIR . 'admin/class-wpbn-admin.php';
 
 register_activation_hook( __FILE__,   array( 'WPBN_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'WPBN_Activator', 'deactivate' ) );
+
+// ── WP-CLI commands ───────────────────────────────────────────────────────────
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-cli.php';
+    $wpbn_cli = new WPBN_CLI();
+    WP_CLI::add_command( 'nota backup',    array( $wpbn_cli, 'cmd_backup' ) );
+    WP_CLI::add_command( 'nota list',      array( $wpbn_cli, 'cmd_list' ) );
+    WP_CLI::add_command( 'nota info',      array( $wpbn_cli, 'cmd_info' ) );
+    WP_CLI::add_command( 'nota delete',    array( $wpbn_cli, 'cmd_delete' ) );
+    WP_CLI::add_command( 'nota installer', array( $wpbn_cli, 'cmd_installer' ) );
+    WP_CLI::add_command( 'nota download',  array( $wpbn_cli, 'cmd_download' ) );
+    WP_CLI::add_command( 'nota status',    array( $wpbn_cli, 'cmd_status' ) );
+    WP_CLI::add_command( 'nota verify',    array( $wpbn_cli, 'cmd_verify' ) );
+    WP_CLI::add_command( 'nota cleanup',   array( $wpbn_cli, 'cmd_cleanup' ) );
+    WP_CLI::add_command( 'nota restore',   array( $wpbn_cli, 'cmd_restore' ) );
+}
 
 // ── Size formatting helper ────────────────────────────────────────────────────
 if ( ! function_exists( 'wpbn_size_format' ) ) :

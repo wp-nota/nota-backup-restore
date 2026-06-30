@@ -36,6 +36,7 @@ class WPBN_Backup {
             'backup_type'     => 'manual',
             'selected_paths'  => array(),
             'selected_tables' => array(),
+            'exclude_paths'   => array(), // extra per-run excludes (absolute paths), merged with the saved exclusions
         );
         $args = wp_parse_args( $args, $defaults );
 
@@ -122,6 +123,7 @@ class WPBN_Backup {
         // File list — empty for db_only
         $exclude = array_merge(
             (array) WPBN_Settings::get( 'exclude_paths' ),
+            array_filter( (array) ( $args['exclude_paths'] ?? array() ) ),
             array( WPBN_BACKUP_DIR )
         );
         $file_list    = array();
@@ -661,6 +663,40 @@ class WPBN_Backup {
         );
 
         return true;
+    }
+
+    /**
+     * Build the standalone installer PHP for a backup, without writing it to disk.
+     *
+     * Returns the generated filename and the file contents so callers can stream
+     * it (admin download) or write it to a chosen path (WP-CLI). The installer is
+     * deliberately never stored in the public backup directory.
+     *
+     * @param int $backup_id Backup row ID.
+     * @return array { success:bool, filename?:string, content?:string, error?:string }
+     */
+    public static function build_installer_content( int $backup_id ): array {
+        global $wpdb;
+        $table = $wpdb->prefix . 'wpbn_backups';
+        $row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $backup_id ) );
+        if ( ! $row ) {
+            return array( 'success' => false, 'error' => 'Backup not found.' );
+        }
+
+        $tpl = WPBN_PLUGIN_DIR . 'includes/installer-template.tpl';
+        if ( ! file_exists( $tpl ) ) {
+            return array( 'success' => false, 'error' => 'Installer template not found.' );
+        }
+
+        $content = file_get_contents( $tpl );
+        if ( $content === false ) {
+            return array( 'success' => false, 'error' => 'Could not read the installer template.' );
+        }
+
+        $content  = str_replace( '@@ZIP_FILE@@', $row->filename, $content );
+        $filename = 'installer_' . pathinfo( $row->filename, PATHINFO_FILENAME ) . '.php';
+
+        return array( 'success' => true, 'filename' => $filename, 'content' => $content );
     }
 
     private static function resolve_encryption_password(): string {

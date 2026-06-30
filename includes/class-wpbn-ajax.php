@@ -381,19 +381,12 @@ class WPBN_Ajax {
         $id = absint( wp_unslash( $_GET['backup_id'] ?? 0 ) );
         if ( ! $id ) wp_die( esc_html__( 'Invalid backup ID.', 'nota-backup-restore' ), 400 );
 
-        global $wpdb;
-        $table = $wpdb->prefix . 'wpbn_backups';
-        $row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ) );
-        if ( ! $row ) wp_die( esc_html__( 'Backup not found.', 'nota-backup-restore' ), 404 );
-
-        $tpl = WPBN_PLUGIN_DIR . 'includes/installer-template.tpl';
-        if ( ! file_exists( $tpl ) ) wp_die( esc_html__( 'Installer template not found.', 'nota-backup-restore' ), 404 );
-
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- reading local plugin file
-        $content = file_get_contents( $tpl );
-        $content = str_replace( '@@ZIP_FILE@@', $row->filename, $content );
-
-        $name = 'installer_' . pathinfo( $row->filename, PATHINFO_FILENAME ) . '.php';
+        $built = WPBN_Backup::build_installer_content( $id );
+        if ( empty( $built['success'] ) ) {
+            wp_die( esc_html( $built['error'] ?? 'Could not build installer.' ), 404 );
+        }
+        $content = $built['content'];
+        $name    = $built['filename'];
 
         while ( ob_get_level() ) ob_end_clean();
         header( 'Content-Type: application/octet-stream' );

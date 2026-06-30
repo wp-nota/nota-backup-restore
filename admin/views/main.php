@@ -241,6 +241,10 @@ $wpbn_pro_badge   = ' <span class="wpbn-pro-badge" style="font-size:.65rem;verti
         }
         echo ' ' . wp_kses_post( $wpbn_pro_badge );
     ?></td></tr>
+    <tr><td><?php esc_html_e( 'WP-CLI', 'nota-backup-restore' ); ?></td><td>
+        <code style="font-size:.8rem;">wp nota</code>
+        <span class="text-muted"> &#x2014; <?php esc_html_e( 'manage backups from the terminal', 'nota-backup-restore' ); ?></span>
+    </td></tr>
     <tr><td><?php esc_html_e( 'Exclusions', 'nota-backup-restore' ); ?></td><td><?php if ( ! empty( $exclude_paths ) ): ?>
      <details style="cursor:pointer;">
       <summary style="color:#2271b1;"><?php
