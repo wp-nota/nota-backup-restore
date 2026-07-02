@@ -1,6 +1,6 @@
 === Nota Backup & Restore ===
 Contributors: wpnota
-Tags: backup, restore, migration, database, sqlite
+Tags: backup, database backup, restore, migration, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -8,11 +8,11 @@ Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WordPress backup plugin. One-click full site backup — files + database. ZIP (free) & SQLite (Pro) archive formats. Chunked processing, never times out
+Backup, restore & migrate WordPress in one click. Full site backup (files + database), AES-256 encryption, WP-CLI — never times out on shared hosting.
 
 == Description ==
 
-**Nota Backup & Restore** creates complete WordPress backups (all files + database) in a single ZIP file. Designed for reliability on shared hosting — chunked processing ensures backups never fail due to PHP timeouts or memory limits.
+**Nota Backup & Restore** lets you back up, restore and migrate your WordPress site with one click — all files + database in a single ZIP. Designed for reliability on shared hosting: chunked processing ensures backups never fail due to PHP timeouts or memory limits.
 
 Nota Backup & Restore works as a complete site duplicator — clone your WordPress site to a staging environment, migrate to a new host, or restore from any backup with one click.
 
@@ -49,6 +49,17 @@ The following features require the [Pro version](https://www.wp-nota.com/pricing
 2. Click **Start Backup**
 3. The plugin creates a ZIP file of all your files and database
 4. Download the ZIP from the backup list
+
+= Migrate or Clone Your WordPress Site =
+
+Nota Backup & Restore doubles as a free WordPress migration and cloning tool:
+
+* **Move to a new host** — back up on the old server, restore on the new one with the standalone installer
+* **Change your domain** — all URLs and file paths are replaced automatically, including inside serialized PHP data
+* **Clone a site** — duplicate your site to a subdirectory or a new server for testing or development
+* **Transfer from local to live** — build locally, then move the entire site to production in minutes
+
+No size limits, no premium unlock for migration — the standalone installer is included in the free version.
 
 = Standalone Installer =
 
@@ -116,6 +127,9 @@ Yes. The database is encrypted with AES-256-CBC. The encryption key is derived f
 
 = Can I restore to a different domain? =
 Yes. The standalone installer handles full migrations. It replaces all URLs and paths — including inside serialized PHP data — so WordPress loads correctly on the new domain.
+
+= How do I clone a WordPress site? =
+Create a full backup, then download the backup ZIP and the installer file. Upload both to the destination — a subdirectory, a subdomain, or a completely different server — and run the installer. It extracts the files, imports the database, and updates all URLs. Your clone is ready in minutes.
 
 = How do I migrate WordPress to a new host? =
 Download the backup ZIP and the Installer PHP file from the backup list. Upload both to the new server's web root, open the installer in your browser, enter the new database credentials and site URL, and the wizard handles the rest — including replacing all URLs in the database.
