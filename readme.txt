@@ -1,4 +1,4 @@
-=== Nota Backup & Restore ===
+=== Nota Backup & Restore – WordPress Backup, Migration & Clone ===
 Contributors: wpnota
 Tags: backup, database backup, restore, migration, clone
 Requires at least: 5.6
@@ -15,6 +15,12 @@ Backup, restore & migrate WordPress in one click. Full site backup (files + data
 **Nota Backup & Restore** lets you back up, restore and migrate your WordPress site with one click — all files + database in a single ZIP. Designed for reliability on shared hosting: chunked processing ensures backups never fail due to PHP timeouts or memory limits.
 
 Nota Backup & Restore works as a complete site duplicator — clone your WordPress site to a staging environment, migrate to a new host, or restore from any backup with one click.
+
+https://youtu.be/nnVlipQA4Go
+
+= Try It Now — Free Demo =
+
+Want to test the plugin before installing? [Launch a free demo site](https://tastewp.com/new/?pre-installed-plugin-slug=nota-backup-restore&ni=true) with Nota Backup & Restore pre-installed — create a real backup, browse the history, and download the ZIP. No signup required.
 
 = Free Features =
 
