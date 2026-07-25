@@ -4,7 +4,7 @@ Tags: backup, database backup, restore, migration, clone
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,9 @@ Note: The Pro version (distributed separately, not hosted on WordPress.org) conn
 4. Exclusions — exclude cache directories, server config files, or any custom folder from backups.
 
 == Changelog ==
+
+= 2.3.1 =
+* Fix: Activating the Pro version while this free plugin was still active could trigger a fatal error instead of a clean handover — the Pro version's free-edition detection was broken and never matched, so both editions loaded their identically-named classes in the same request. The free edition now steps aside correctly when the Pro version is active.
 
 = 2.3.0 =
 * New: WP-CLI support — manage backups from the terminal with `wp nota` (backup, list, info, verify, download, installer, delete, status, cleanup)

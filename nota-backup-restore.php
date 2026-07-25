@@ -3,7 +3,7 @@
  * Plugin Name: Nota Backup & Restore
  * Plugin URI:  https://www.wp-nota.com
  * Description: Full site backup plugin. Backup files + database with one click. Cloud storage and restore features available in the premium version.
- * Version:     2.3.0
+ * Version:     2.3.1
  * Author:      wp-nota.com
  * Author URI:  https://wp-nota.com
  * License:     GPL-2.0+
@@ -14,19 +14,30 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/*
+ * Premium-edition handover. The premium edition shares this plugin's class,
+ * function and constant names, and its folder name sorts BEFORE this one, so
+ * when both are active the premium edition has already fully loaded by the
+ * time this file runs. Define nothing in that case — redeclaring anything
+ * would fatal. The premium edition deactivates this plugin on the next admin
+ * page load; settings and backup history are shared between editions, so
+ * nothing is lost.
+ */
+if ( defined( 'WPBN_VERSION' ) ) {
+    return;
+}
+
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.SchemaChange -- $table is always $wpdb->prefix.'wpbn_backups', never user input; schema migrations cannot use prepare()
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup operation diagnostics
-if ( ! defined( 'WPBN_VERSION' ) )     define( 'WPBN_VERSION',     '2.3.0' );
-if ( ! defined( 'WPBN_PLUGIN_DIR' ) )  define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
-if ( ! defined( 'WPBN_PLUGIN_URL' ) )  define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
-if ( ! defined( 'WPBN_PLUGIN_FILE' ) ) define( 'WPBN_PLUGIN_FILE', __FILE__ );
-if ( ! defined( 'WPBN_BACKUP_DIR' ) ) {
-    $wpbn_upload = wp_upload_dir();
-    define( 'WPBN_BACKUP_DIR', $wpbn_upload['basedir'] . '/nota-backup-restore' );
-    define( 'WPBN_BACKUP_URL', $wpbn_upload['baseurl'] . '/nota-backup-restore' );
-    unset( $wpbn_upload );
-}
-if ( ! defined( 'WPBN_CHUNK_SIZE' ) )  define( 'WPBN_CHUNK_SIZE',  5 * 1024 * 1024 );
+define( 'WPBN_VERSION',     '2.3.1' );
+define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
+define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
+define( 'WPBN_PLUGIN_FILE', __FILE__ );
+$wpbn_upload = wp_upload_dir();
+define( 'WPBN_BACKUP_DIR', $wpbn_upload['basedir'] . '/nota-backup-restore' );
+define( 'WPBN_BACKUP_URL', $wpbn_upload['baseurl'] . '/nota-backup-restore' );
+unset( $wpbn_upload );
+define( 'WPBN_CHUNK_SIZE',  5 * 1024 * 1024 );
 
 function wpbn_upgrade_url(): string {
     return 'https://www.wp-nota.com/pricing/';
