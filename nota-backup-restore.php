@@ -3,7 +3,7 @@
  * Plugin Name: Nota Backup & Restore
  * Plugin URI:  https://www.wp-nota.com
  * Description: Full site backup plugin. Backup files + database with one click. Cloud storage and restore features available in the premium version.
- * Version:     2.3.1
+ * Version:     2.3.2
  * Author:      wp-nota.com
  * Author URI:  https://wp-nota.com
  * License:     GPL-2.0+
@@ -29,7 +29,7 @@ if ( defined( 'WPBN_VERSION' ) ) {
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.SchemaChange -- $table is always $wpdb->prefix.'wpbn_backups', never user input; schema migrations cannot use prepare()
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log -- error_log used intentionally for backup operation diagnostics
-define( 'WPBN_VERSION',     '2.3.1' );
+define( 'WPBN_VERSION',     '2.3.2' );
 define( 'WPBN_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'WPBN_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
 define( 'WPBN_PLUGIN_FILE', __FILE__ );
@@ -39,17 +39,41 @@ define( 'WPBN_BACKUP_URL', $wpbn_upload['baseurl'] . '/nota-backup-restore' );
 unset( $wpbn_upload );
 define( 'WPBN_CHUNK_SIZE',  5 * 1024 * 1024 );
 
-function wpbn_upgrade_url(): string {
-    return 'https://www.wp-nota.com/pricing/';
+// Guarded even though the top-of-file WPBN_VERSION check above is the
+// primary defense against redeclaring premium's copy of this function — a
+// second, independent line of defense in case that check is ever bypassed
+// (e.g. a stale opcode cache still running an older, unguarded build).
+if ( ! function_exists( 'wpbn_upgrade_url' ) ) {
+    function wpbn_upgrade_url(): string {
+        return 'https://www.wp-nota.com/pricing/';
+    }
 }
 
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-activator.php';
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-logger.php';
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-settings.php';
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-backup.php';
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-database.php';
-require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-ajax.php';
-require_once WPBN_PLUGIN_DIR . 'admin/class-wpbn-admin.php';
+// Guarded the same way as the functions below — these class names are
+// shared with the premium edition, so a class redeclare fatal is exactly as
+// possible here as the function redeclare fatal these guards were added to
+// prevent (see WPBN_VERSION check above for the primary defense).
+if ( ! class_exists( 'WPBN_Activator', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-activator.php';
+}
+if ( ! class_exists( 'WPBN_Logger', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-logger.php';
+}
+if ( ! class_exists( 'WPBN_Settings', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-settings.php';
+}
+if ( ! class_exists( 'WPBN_Backup', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-backup.php';
+}
+if ( ! class_exists( 'WPBN_Database', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-database.php';
+}
+if ( ! class_exists( 'WPBN_Ajax', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'includes/class-wpbn-ajax.php';
+}
+if ( ! class_exists( 'WPBN_Admin', false ) ) {
+    require_once WPBN_PLUGIN_DIR . 'admin/class-wpbn-admin.php';
+}
 
 register_activation_hook( __FILE__,   array( 'WPBN_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'WPBN_Activator', 'deactivate' ) );
@@ -122,6 +146,11 @@ add_action( 'admin_init', function () {
 // ── Cron hooks ───────────────────────────────────────────────────────────────
 add_action( 'wpbn_process_next_chunk', 'wpbn_cron_process_chunk' );
 
+// Guarded like the functions above — premium's copy of each is already
+// guarded the same way, but this side was missing it, which is exactly what
+// let a stale/outdated copy of this file redeclare a function premium had
+// already declared and fatal in production.
+if ( ! function_exists( 'wpbn_run_timed_zip_loop' ) ) :
 function wpbn_run_timed_zip_loop( $max_seconds = 20 ) {
     $start     = microtime( true );
     $iteration = 0;
@@ -142,7 +171,9 @@ function wpbn_run_timed_zip_loop( $max_seconds = 20 ) {
 
     return $r['next'] === 'zip_files' ? 'more' : 'done';
 }
+endif;
 
+if ( ! function_exists( 'wpbn_cron_process_chunk' ) ) :
 function wpbn_cron_process_chunk() {
     ignore_user_abort( true );
     @set_time_limit( 60 );  // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- inside cron callback, extends per-execution limit for ZIP chunk processing
@@ -186,7 +217,9 @@ function wpbn_cron_process_chunk() {
         error_log( 'WP Backup Nota: Backup completed successfully via cron chain.' );
     }
 }
+endif;
 
+if ( ! function_exists( 'wpbn_cleanup_failed_state' ) ) :
 function wpbn_cleanup_failed_state( string $error_msg = '' ) {
     $fail_state = get_option( WPBN_Backup::STATE_OPTION );
     if ( ! $fail_state ) return;
@@ -230,7 +263,9 @@ function wpbn_cleanup_failed_state( string $error_msg = '' ) {
     delete_option( WPBN_Backup::STATE_OPTION );
     error_log( 'WP Backup Nota: Cleaned up failed backup state. Reason: ' . $msg );
 }
+endif;
 
+if ( ! function_exists( 'wpbn_init' ) ) :
 function wpbn_init() {
     $locale = determine_locale();
     $mofile = WPBN_PLUGIN_DIR . 'languages/nota-backup-restore-' . $locale . '.mo';
@@ -243,8 +278,10 @@ function wpbn_init() {
     new WPBN_Ajax();
     wpbn_maybe_create_logs_table();
 }
+endif;
 add_action( 'plugins_loaded', 'wpbn_init' );
 
+if ( ! function_exists( 'wpbn_maybe_create_logs_table' ) ) :
 function wpbn_maybe_create_logs_table() {
     global $wpdb;
     $logs_table = $wpdb->prefix . 'wpbn_logs';
@@ -264,3 +301,4 @@ function wpbn_maybe_create_logs_table() {
         dbDelta( $sql_logs );
     }
 }
+endif;
