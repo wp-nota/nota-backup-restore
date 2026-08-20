@@ -2,7 +2,7 @@
 Contributors: wpnota
 Tags: backup, database backup, restore, migration, clone
 Requires at least: 5.6
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 2.3.2
 License: GPLv2 or later
