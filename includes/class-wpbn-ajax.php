@@ -29,6 +29,7 @@ class WPBN_Ajax {
         add_action( 'wp_ajax_wpbn_browse_dir',           array( $this, 'browse_dir' ) );
         add_action( 'wp_ajax_wpbn_delete_leftovers',     array( $this, 'delete_leftovers' ) );
         add_action( 'wp_ajax_wpbn_dismiss_leftovers',    array( $this, 'dismiss_leftovers' ) );
+        add_action( 'wp_ajax_wpbn_dismiss_bfcm2026',     array( $this, 'dismiss_bfcm2026' ) );
     }
 
     /**
@@ -783,6 +784,12 @@ class WPBN_Ajax {
     public function dismiss_review() {
         $this->check_permissions();
         update_option( 'wpbn_review_dismissed', 1 );
+        wp_send_json_success();
+    }
+
+    public function dismiss_bfcm2026() {
+        $this->check_permissions();
+        update_option( 'wpbn_bfcm2026_dismissed', 1 );
         wp_send_json_success();
     }
 

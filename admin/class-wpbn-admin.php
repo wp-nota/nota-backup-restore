@@ -10,6 +10,77 @@ class WPBN_Admin {
         add_action( 'wp_dashboard_setup',     array( $this, 'register_dashboard_widget' ) );
         add_action( 'admin_notices',          array( $this, 'render_review_notice' ) );
         add_action( 'admin_notices',          array( $this, 'render_leftover_notice' ) );
+        add_action( 'admin_notices',          array( $this, 'render_bfcm2026_notice' ) );
+    }
+
+    /**
+     * Black Friday / Cyber Monday 2026 campaign notice.
+     * Dates are hardcoded — no network requests. Visible only to admins,
+     * only on Dashboard/Plugins/own plugin pages, 24 Nov - 1 Dec 2026:
+     * 24-26 Nov shows a "coming soon" teaser, 27 Nov-1 Dec shows the live offer.
+     */
+    public function render_bfcm2026_notice() {
+        if ( ! current_user_can( 'manage_options' ) ) return;
+        if ( get_option( 'wpbn_bfcm2026_dismissed' ) ) return;
+
+        $now             = time();
+        $announce_start  = strtotime( '2026-11-24 00:00:00 UTC' );
+        $campaign_start  = strtotime( '2026-11-27 00:00:00 UTC' );
+        $campaign_end    = strtotime( '2026-12-01 23:59:59 UTC' );
+        if ( $now < $announce_start || $now > $campaign_end ) return;
+        $is_teaser = $now < $campaign_start;
+
+        $screen = get_current_screen();
+        if ( ! $screen ) return;
+        $allowed = in_array( $screen->id, array( 'dashboard', 'plugins' ), true ) || strpos( $screen->id, 'wp-backup-nota' ) !== false;
+        if ( ! $allowed ) return;
+
+        $nonce       = wp_create_nonce( 'wpbn_nonce' );
+        $upgrade_url = wpbn_upgrade_url();
+        ?>
+        <div class="notice notice-info wpbn-bfcm-notice" id="wpbn-bfcm-notice" style="display:flex;align-items:center;gap:12px;padding:10px 16px;">
+            <span style="font-size:1.2rem;line-height:1;">🎉</span>
+            <p style="margin:0;flex:1;">
+                <?php
+                if ( $is_teaser ) {
+                    echo wp_kses_post(
+                        sprintf(
+                            /* translators: 1: coupon code */
+                            __( '<strong>Black Friday is coming:</strong> 40%% off your first year of Nota Backup &amp; Restore Pro with code <code>%1$s</code> — 27 Nov to 1 Dec.', 'nota-backup-restore' ),
+                            'FSBFCM2026'
+                        )
+                    );
+                } else {
+                    echo wp_kses_post(
+                        sprintf(
+                            /* translators: 1: coupon code */
+                            __( '<strong>Black Friday:</strong> 40%% off your first year of Nota Backup &amp; Restore Pro with code <code>%1$s</code> — until 1 Dec.', 'nota-backup-restore' ),
+                            'FSBFCM2026'
+                        )
+                    );
+                }
+                ?>
+            </p>
+            <a href="<?php echo esc_url( $upgrade_url ); ?>" class="button button-primary" target="_blank" rel="noopener">
+                <?php esc_html_e( 'See Pro features', 'nota-backup-restore' ); ?>
+            </a>
+            <button type="button" class="notice-dismiss" id="wpbn-bfcm-dismiss" style="position:static;float:none;"></button>
+        </div>
+        <script>
+        (function(){
+            var dis = document.getElementById('wpbn-bfcm-dismiss');
+            var box = document.getElementById('wpbn-bfcm-notice');
+            if (!dis) return;
+            dis.addEventListener('click', function(){
+                var fd = new FormData();
+                fd.append('action', 'wpbn_dismiss_bfcm2026');
+                fd.append('nonce', '<?php echo esc_js( $nonce ); ?>');
+                fetch(ajaxurl, { method:'POST', body: fd });
+                if (box) box.remove();
+            });
+        })();
+        </script>
+        <?php
     }
 
     /**
